@@ -16,6 +16,16 @@ class UserController extends Controller
 {
 
     /**
+     * Folder to views
+     */
+    private $_folder = 'users.';
+
+    /**
+     * Action Index in controller
+     */
+    private $_actionIndex = 'UserController@index';
+
+    /**
      * Constructor
      */
     function __construct()
@@ -33,8 +43,8 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-        $data = User::orderBy('id','DESC')->paginate(5);
-        return view('users.index',compact('data'))
+        $users = User::paginate(5);
+        return $this->showView( __FUNCTION__ ,compact('users'))
             ->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
@@ -47,7 +57,7 @@ class UserController extends Controller
     public function create()
     {
         $roles = Role::pluck('name','name')->all();
-        return view('users.create',compact('roles'));
+        return $this->showView( __FUNCTION__ ,compact('roles'));
     }
 
 
@@ -59,12 +69,7 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        $this->validate($request, [
-            'name' => 'required',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|same:confirm-password',
-            'roles' => 'required'
-        ]);
+        $this->validating($request);
 
 
         $input = $request->all();
@@ -75,8 +80,7 @@ class UserController extends Controller
         $user->assignRole($request->input('roles'));
 
 
-        return redirect()->route('users.index')
-                        ->with('success','User created successfully');
+        return $this->returnStatusOk('User created successfully');
     }
 
 
@@ -102,11 +106,16 @@ class UserController extends Controller
     public function edit($id)
     {
         $user = User::find($id);
+
+        if(empty($user)) {
+            return $this->returnStatusNotOk(__('Not found!!'));
+        }
+
         $roles = Role::pluck('name','name')->all();
         $userRole = $user->roles->pluck('name','name')->all();
 
 
-        return view('users.edit',compact('user','roles','userRole'));
+        return $this->showView( __FUNCTION__ ,compact('user','roles','userRole'));
     }
 
 
@@ -119,32 +128,27 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $this->validate($request, [
-            'name' => 'required',
-            'email' => 'required|email|unique:users,email,'.$id,
-            'password' => 'same:confirm-password',
-            'roles' => 'required'
-        ]);
+        $user = User::find($id);
 
-
-        $input = $request->all();
-        if(!empty($input['password'])){ 
-            $input['password'] = Hash::make($input['password']);
-        }else{
-            $input = array_except($input,array('password'));    
+        if(empty($user)) {
+            return $this->returnStatusNotOk(__('Not found!!'));
         }
 
+        $this->validating($request);
 
-        $user = User::find($id);
+        $input = $request->all();
+        if(!empty($input['password'])){
+            $input['password'] = Hash::make($input['password']);
+        }else{
+            $input = array_except($input,['password']);
+        }
+
         $user->update($input);
         DB::table('model_has_roles')->where('model_id',$id)->delete();
 
-
         $user->assignRole($request->input('roles'));
 
-
-        return redirect()->route('users.index')
-                        ->with('success','User updated successfully');
+        return $this->returnStatusOk('User updated successfully');
     }
 
 
@@ -156,7 +160,65 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-        User::find($id)->delete();
-        return redirect()->route('users.index')
-                        ->with('success','User deleted successfully');
+        $user = User::find($id);
+
+        if(empty($user)){
+            return $this->returnStatusNotOk(__('Not found!'));
+        } else {
+            $user->delete();
+        }
+
+        return $this->returnStatusOk('User deleted successfully');
     }
+
+    /**
+     * Regras de validação
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return void
+     */
+    protected function validating(Request $request)
+    {
+        $request->validate([
+            'name' => 'required',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|same:confirm-password',
+            'roles' => 'required'
+        ]);
+    }
+
+    /**
+     * Return view
+     *
+     * @param string $name name of view
+     * @param array $data array data returned
+     *
+     * @return \Illuminate\Http\Response
+     */
+    protected function showView($name,$data = [])
+    {
+        return view($this->_folder.$name,$data);
+    }
+
+    /**
+     * Redirect with ok status
+     * @param string $status
+     *
+     * @return \Illuminate\Http\Response
+     */
+     protected function returnStatusOk($status)
+     {
+        return redirect()->action($this->_actionIndex)->with('status',$status);
+     }
+
+     /**
+     * Redirect with status not ok
+     * @param string $status
+     *
+     * @return \Illuminate\Http\Response
+     */
+     protected function returnStatusNotOk($status)
+     {
+        return redirect()->action($this->_actionIndex)->with('status_error',$status);
+     }
+}

@@ -108,12 +108,7 @@ class ProductsController extends Controller
             return $this->returnStatusNotOk(__('Not found!!'));
         }
 
-        $product->name = $request->input('name');
-        $product->stock = $request->input('stock');
-        $product->price = $request->input('price');
-        $product->category_id = $request->input('category_id');
-
-        $product->save();
+        $product->update($request->all());
 
         return $this->returnStatusOk('Updated');
     }

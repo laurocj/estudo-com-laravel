@@ -9,11 +9,6 @@
         return ' form-control ';
     }
 ?>
-@if (session('*'))
-    <div class="alert alert-success">
-        {{ session('*') }}
-    </div>
-@endif
 @extends('layouts.app')
 
 @section('content')
@@ -80,7 +75,8 @@
                     </div>
 
                     <div class="form-group">
-                        {{ Form::submit('Save', array( 'class'=>'btn btn-danger form-control' )) }}
+                        {{ Form::submit('Save', array( 'class'=>'btn btn-danger' )) }}
+                        <a class="btn btn-primary" href="{{ route('produtos.index') }}"> Back</a>
                     </div>
                 {{ Form::close() }}
             </div>

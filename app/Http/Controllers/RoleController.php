@@ -105,10 +105,16 @@ class RoleController extends Controller
     public function edit($id)
     {
         $role = Role::find($id);
+
+        if(empty($role)) {
+            return $this->returnStatusNotOk(__('Not found!!'));
+        }
+
         $permission = Permission::get();
-        $rolePermissions = DB::table("role_has_permissions")->where("role_has_permissions.role_id",$id)
-            ->pluck('role_has_permissions.permission_id','role_has_permissions.permission_id')
-            ->all();
+        $rolePermissions = DB::table("role_has_permissions")
+                                ->where("role_has_permissions.role_id",$id)
+                                ->pluck('role_has_permissions.permission_id','role_has_permissions.permission_id')
+                                ->all();
 
 
         return $this->showView(__FUNCTION__,compact('role','permission','rolePermissions'));
@@ -124,16 +130,18 @@ class RoleController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $role = Role::find($id);
+
+        if(empty($role)) {
+            return $this->returnStatusNotOk(__('Not found!!'));
+        }
+
         $this->validatinge($request);
 
-
-        $role = Role::find($id);
         $role->name = $request->input('name');
         $role->save();
 
-
         $role->syncPermissions($request->input('permission'));
-
 
         return $this->returnStatusOk('Role updated successfully');
     }
@@ -145,8 +153,15 @@ class RoleController extends Controller
      */
     public function destroy($id)
     {
-        DB::table("roles")->where('id',$id)->delete();
-        return $this->returnStatusOk('success','Role deleted successfully');
+        $role = Role::find($id);
+
+        if(empty($role)) {
+            return $this->returnStatusNotOk(__('Not found!!'));
+        } else {
+            $role->delete();
+        }
+
+        return $this->returnStatusOk('Role deleted successfully');
     }
 
     /**
