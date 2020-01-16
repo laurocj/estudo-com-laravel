@@ -102,6 +102,8 @@ class ProductsController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $this->validating($request);
+
         $product = Product::find($id);
 
         if(empty($product)) {

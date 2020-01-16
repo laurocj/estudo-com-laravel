@@ -70,11 +70,6 @@
                     </div>
 
                     <div class="form-group">
-                        {{ Form::label('image', 'Choose an image') }}
-                        {{ Form::file('image') }}
-                    </div>
-
-                    <div class="form-group">
                         {{ Form::submit('Save', array( 'class'=>'btn btn-danger' )) }}
                         <a class="btn btn-primary" href="{{ route('produtos.index') }}"> Back</a>
                     </div>

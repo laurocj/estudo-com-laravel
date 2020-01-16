@@ -1,69 +1,89 @@
+<?php
+    function getClassList($field,$errors) {
+        if($errors->has($field))
+            return ' form-control is-invalid ';
+
+        if(old($field) !== null)
+            return ' form-control is-valid ';
+
+        return ' form-control ';
+    }
+?>
 @extends('layouts.app')
 
-
 @section('content')
-<div class="row">
-    <div class="col-lg-12 margin-tb">
-        <div class="pull-left">
-            <h2>Create New User</h2>
-        </div>
-        <div class="pull-right">
-            <a class="btn btn-primary" href="{{ route('users.index') }}"> Back</a>
+<div class="container">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                {{ __('Create New User') }}
+            </div>
+            <div class="card-body">
+                {!! Form::open(array('route' => 'users.store','method'=>'POST')) !!}
+                <div class="form-group">
+                    {{ Form::label('name', __('Name:')) }}
+                    {{ Form::text('name', null, ['class'=>getClassList('name',$errors)]) }}
+                    <div class="invalid-feedback">
+                        @if($errors->has('name'))
+                            @foreach($errors->get('name') as $msg)
+                            {{$msg}}<br/>
+                            @endforeach
+                        @endif
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    {{ Form::label('email', __('E-mail:')) }}
+                    {{ Form::text('email', null, ['class'=>getClassList('email',$errors)]) }}
+                    <div class="invalid-feedback">
+                        @if($errors->has('email'))
+                            @foreach($errors->get('email') as $msg)
+                            {{$msg}}<br/>
+                            @endforeach
+                        @endif
+                    </div>
+                </div>
+                <div class="form-group">
+                    {{ Form::label('password', __('Password:')) }}
+                    {{ Form::text('password', null, ['class'=>getClassList('password',$errors)]) }}
+                    <div class="invalid-feedback">
+                        @if($errors->has('password'))
+                            @foreach($errors->get('password') as $msg)
+                            {{$msg}}<br/>
+                            @endforeach
+                        @endif
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    {{ Form::label('confirm-password', __('Confirm password:')) }}
+                    {{ Form::text('confirm-password', null, ['class'=>getClassList('confirm-password',$errors)]) }}
+                    <div class="invalid-feedback">
+                        @if($errors->has('confirm-password'))
+                            @foreach($errors->get('confirm-password') as $msg)
+                            {{$msg}}<br/>
+                            @endforeach
+                        @endif
+                    </div>
+                </div>
+                <div class="form-group">
+                    {{ Form::label('roles', __('Title:')) }}
+                    {!! Form::select('roles[]', $roles,[], array('class' => 'form-control','multiple')) !!}
+                    <div class="invalid-feedback">
+                        @if($errors->has('roles'))
+                            @foreach($errors->get('roles') as $msg)
+                            {{$msg}}<br/>
+                            @endforeach
+                        @endif
+                    </div>
+                </div>
+                <div class="form-group">
+                    {{ Form::submit('Save', array( 'class'=>'btn btn-danger' )) }}
+                    <a class="btn btn-primary" href="{{ route('categorias.index') }}"> Back</a>
+                </div>
+                {!! Form::close() !!}
+            </div>
         </div>
     </div>
 </div>
-
-
-@if (count($errors) > 0)
-  <div class="alert alert-danger">
-    <strong>Whoops!</strong> There were some problems with your input.<br><br>
-    <ul>
-       @foreach ($errors->all() as $error)
-         <li>{{ $error }}</li>
-       @endforeach
-    </ul>
-  </div>
-@endif
-
-
-
-{!! Form::open(array('route' => 'users.store','method'=>'POST')) !!}
-<div class="row">
-    <div class="col-xs-12 col-sm-12 col-md-12">
-        <div class="form-group">
-            <strong>Name:</strong>
-            {!! Form::text('name', null, array('placeholder' => 'Name','class' => 'form-control')) !!}
-        </div>
-    </div>
-    <div class="col-xs-12 col-sm-12 col-md-12">
-        <div class="form-group">
-            <strong>Email:</strong>
-            {!! Form::text('email', null, array('placeholder' => 'Email','class' => 'form-control')) !!}
-        </div>
-    </div>
-    <div class="col-xs-12 col-sm-12 col-md-12">
-        <div class="form-group">
-            <strong>Password:</strong>
-            {!! Form::password('password', array('placeholder' => 'Password','class' => 'form-control')) !!}
-        </div>
-    </div>
-    <div class="col-xs-12 col-sm-12 col-md-12">
-        <div class="form-group">
-            <strong>Confirm Password:</strong>
-            {!! Form::password('confirm-password', array('placeholder' => 'Confirm Password','class' => 'form-control')) !!}
-        </div>
-    </div>
-    <div class="col-xs-12 col-sm-12 col-md-12">
-        <div class="form-group">
-            <strong>Role:</strong>
-            {!! Form::select('roles[]', $roles,[], array('class' => 'form-control','multiple')) !!}
-        </div>
-    </div>
-    <div class="col-xs-12 col-sm-12 col-md-12 text-center">
-        <button type="submit" class="btn btn-primary">Submit</button>
-    </div>
-</div>
-{!! Form::close() !!}
-
-
 @endsection

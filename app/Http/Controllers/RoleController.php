@@ -70,7 +70,7 @@ class RoleController extends Controller
      */
     public function store(Request $request)
     {
-        $this->validatinge($request);
+        $this->validating($request);
 
         $role = Role::create(['name' => $request->input('name')]);
         $role->syncPermissions($request->input('permission'));
@@ -136,7 +136,7 @@ class RoleController extends Controller
             return $this->returnStatusNotOk(__('Not found!!'));
         }
 
-        $this->validatinge($request);
+        $this->validating($request);
 
         $role->name = $request->input('name');
         $role->save();
