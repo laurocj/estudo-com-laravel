@@ -26,36 +26,36 @@
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="card-body p-0">
-            <table class="table table-ordered">
-                <thead>
-                    <tr>
-                        <th>Id</th>
-                        <th>Title</th>
-                        <th>Category</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($products as $product)
+            <div class="card-body p-0">
+                <table class="table table-ordered">
+                    <thead>
                         <tr>
-                            <td>{{$product->id}}</td>
-                            <td>{{$product->name}}</td>
-                            <td>{{$product->category->name ?? ''}}</td>
-                            <td>
-                                <a href="{{route('produtos.edit',$product->id)}}" class='btn btn-primary btn-sm '>Edit</a>
-                                {{ Form::open(array('route' => ['produtos.destroy',$product->id],'method' => 'delete','class'=>'d-inline')) }}
-                                {{ Form::submit(__('Delete'), array( 'class'=>'btn btn-danger btn-sm' )) }}
-                                {{ Form::close() }}
-                            </td>
+                            <th>Id</th>
+                            <th>Title</th>
+                            <th>Category</th>
+                            <th>Action</th>
                         </tr>
-                    @endforeach
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @foreach($products as $product)
+                            <tr>
+                                <td>{{$product->id}}</td>
+                                <td>{{$product->name}}</td>
+                                <td>{{$product->category->name ?? ''}}</td>
+                                <td>
+                                    <a href="{{route('produtos.edit',$product->id)}}" class='btn btn-primary btn-sm '>Edit</a>
+                                    {{ Form::open(array('route' => ['produtos.destroy',$product->id],'method' => 'delete','class'=>'d-inline')) }}
+                                    {{ Form::submit(__('Delete'), array( 'class'=>'btn btn-danger btn-sm' )) }}
+                                    {{ Form::close() }}
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
 
-            {{ $products->links() }}
+                {{ $products->links() }}
 
+            </div>
         </div>
     </div>
 </div>
