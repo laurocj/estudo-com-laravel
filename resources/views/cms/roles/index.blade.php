@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('cms.layouts.app')
 
 
 @section('content')
@@ -22,7 +22,7 @@
                     </div>
                     <div class="col-12 col-md-6 text-right">
                         @can('role-create')
-                            <a href="{{ route('roles.create') }}"
+                            <a href="{{ route('regras.create') }}"
                                 class="btn btn-outline-success"
                             >{{__('New')}}</a>
                         @endcan
@@ -45,12 +45,12 @@
                             <td>{{$role->id}}</td>
                             <td>{{$role->name}}</td>
                             <td>
-                                <a class="btn btn-info btn-sm" href="{{ route('roles.show',$role->id) }}">Show</a>
+                                <a class="btn btn-info btn-sm" href="{{ route('regras.show',$role->id) }}">Show</a>
                                 @can('role-edit')
-                                <a href="{{route('roles.edit',$role->id)}}" class='btn btn-primary btn-sm '>Edit</a>
+                                <a href="{{route('regras.edit',$role->id)}}" class='btn btn-primary btn-sm '>Edit</a>
                                 @endcan
                                 @can('role-delete')
-                                    {{ Form::open(array('route' => ['roles.destroy',$role->id],'method' => 'delete','class'=>'d-inline')) }}
+                                    {{ Form::open(array('route' => ['regras.destroy',$role->id],'method' => 'delete','class'=>'d-inline')) }}
                                     {{ Form::submit(__('Delete'), array( 'class'=>'btn btn-danger btn-sm' )) }}
                                     {{ Form::close() }}
                                 @endcan

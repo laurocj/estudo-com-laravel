@@ -1,41 +1,35 @@
 <?php
 
+namespace App\Http\Controllers\Cms;
 
-namespace App\Http\Controllers;
-
-
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Spatie\Permission\Models\Role;
-use Spatie\Permission\Models\Permission;
-use DB;
+use Illuminate\Http\Request;
+use App\Model\Product;
+use App\Model\Category;
 
-
-class RoleController extends Controller
+class ProductsController extends Controller
 {
+
     /**
-     * Path to views
+     * Folder to views
      */
-    private $_folder = 'roles.';
+    private $_folder = 'cms.products.';
 
     /**
      * Action Index in controller
      */
-    private $_actionIndex = 'RoleController@index';
+    private $_actionIndex = 'ProductsController@index';
 
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
+     * Constructor
      */
     function __construct()
     {
-         $this->middleware('permission:role-list|role-create|role-edit|role-delete', ['only' => ['index','store']]);
-         $this->middleware('permission:role-create', ['only' => ['create','store']]);
-         $this->middleware('permission:role-edit', ['only' => ['edit','update']]);
-         $this->middleware('permission:role-delete', ['only' => ['destroy']]);
+        $this->middleware('permission:product-list|product-create|product-edit|product-delete', ['only' => ['index','show']]);
+        $this->middleware('permission:product-create', ['only' => ['create','store']]);
+        $this->middleware('permission:product-edit', ['only' => ['edit','update']]);
+        $this->middleware('permission:product-delete', ['only' => ['destroy']]);
     }
-
 
     /**
      * Display a listing of the resource.
@@ -44,11 +38,10 @@ class RoleController extends Controller
      */
     public function index(Request $request)
     {
-        $roles = Role::orderBy('id','DESC')->paginate(5);
-        return $this->showView(__FUNCTION__,compact('roles'))
+        $products = Product::paginate(5);
+        return $this->showView( __FUNCTION__ , compact('products'))
             ->with('i', ($request->input('page', 1) - 1) * 5);
     }
-
 
     /**
      * Show the form for creating a new resource.
@@ -57,10 +50,9 @@ class RoleController extends Controller
      */
     public function create()
     {
-        $permission = Permission::get();
-        return $this->showView(__FUNCTION__,compact('permission'));
+        $categories = Category::all()->pluck('name','id');
+        return $this->showView( __FUNCTION__ , compact('categories'));
     }
-
 
     /**
      * Store a newly created resource in storage.
@@ -72,12 +64,16 @@ class RoleController extends Controller
     {
         $this->validating($request);
 
-        $role = Role::create(['name' => $request->input('name')]);
-        $role->syncPermissions($request->input('permission'));
+        Product::create([
+            'name' => $request->name,
+            'stock' => $request->stock,
+            'price' => $request->price,
+            'category_id' => $request->category_id,
+        ]);
 
-
-        return $this->returnStatusOk('Role created successfully');
+        return $this->returnStatusOk('Created');
     }
+
     /**
      * Display the specified resource.
      *
@@ -86,15 +82,8 @@ class RoleController extends Controller
      */
     public function show($id)
     {
-        $role = Role::find($id);
-        $rolePermissions = Permission::join("role_has_permissions","role_has_permissions.permission_id","=","permissions.id")
-            ->where("role_has_permissions.role_id",$id)
-            ->get();
-
-
-        return $this->showView(__FUNCTION__,compact('role','rolePermissions'));
+        //
     }
-
 
     /**
      * Show the form for editing the specified resource.
@@ -104,22 +93,16 @@ class RoleController extends Controller
      */
     public function edit($id)
     {
-        $role = Role::find($id);
+        $product = Product::find($id);
 
-        if(empty($role)) {
+        if(empty($product)) {
             return $this->returnStatusNotOk(__('Not found!!'));
         }
 
-        $permission = Permission::get();
-        $rolePermissions = DB::table("role_has_permissions")
-                                ->where("role_has_permissions.role_id",$id)
-                                ->pluck('role_has_permissions.permission_id','role_has_permissions.permission_id')
-                                ->all();
+        $categories = Category::all()->pluck('name','id');
 
-
-        return $this->showView(__FUNCTION__,compact('role','permission','rolePermissions'));
+        return $this->showView( __FUNCTION__ , compact('product','categories'));
     }
-
 
     /**
      * Update the specified resource in storage.
@@ -130,21 +113,19 @@ class RoleController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $role = Role::find($id);
+        $this->validating($request);
 
-        if(empty($role)) {
+        $product = Product::find($id);
+
+        if(empty($product)) {
             return $this->returnStatusNotOk(__('Not found!!'));
         }
 
-        $this->validating($request);
+        $product->update($request->all());
 
-        $role->name = $request->input('name');
-        $role->save();
-
-        $role->syncPermissions($request->input('permission'));
-
-        return $this->returnStatusOk('Role updated successfully');
+        return $this->returnStatusOk('Updated');
     }
+
     /**
      * Remove the specified resource from storage.
      *
@@ -153,15 +134,15 @@ class RoleController extends Controller
      */
     public function destroy($id)
     {
-        $role = Role::find($id);
+        $product = Product::find($id);
 
-        if(empty($role)) {
+        if(empty($product)) {
             return $this->returnStatusNotOk(__('Not found!!'));
         } else {
-            $role->delete();
+            $product->delete();
         }
 
-        return $this->returnStatusOk('Role deleted successfully');
+        return $this->returnStatusOk('Deleted');
     }
 
     /**
@@ -173,8 +154,10 @@ class RoleController extends Controller
     protected function validating(Request $request)
     {
         $request->validate([
-            'name' => 'required',
-            'permission' => 'required',
+            'name' => 'required|unique:products|max:255',
+            'stock' => 'required|numeric|min:0',
+            'price' => 'required|numeric|min:0.01',
+            'category_id' => 'required',
         ]);
     }
 

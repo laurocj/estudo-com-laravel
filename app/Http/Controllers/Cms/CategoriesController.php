@@ -1,6 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Cms;
+
+use App\Http\Controllers\Controller;
 
 use Illuminate\Http\Request;
 
@@ -12,7 +14,7 @@ class CategoriesController extends Controller
     /**
      * Path to views
      */
-    private $_path = 'categories.';
+    private $_path = 'cms.categories.';
 
     /**
      * Action Index in controller

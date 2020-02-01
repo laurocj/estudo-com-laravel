@@ -22,15 +22,25 @@ Route::get('/', function () {
 //     return "oi {$nome}";
 // });
 
-Route::resource('categorias', 'CategoriesController');
-Route::resource('produtos', 'ProductsController');
+Route::group(['prefix' => 'cms','middleware' => ['auth']], function () {
+    Route::resource('regras','Cms\RoleController');
+    Route::resource('users','Cms\UserController');
+    Route::resource('produtos', 'Cms\ProductsController');
+    Route::resource('categorias', 'Cms\CategoriesController');
+
+    // Route::get('dashboard', [
+    //       'as'   => 'expert.dashboard',
+    //       'uses' => 'DashboardController@index'
+    // ]);
+});
+
 
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 
-Route::group(['middleware' => ['auth']], function() {
-    Route::resource('roles','RoleController');
-    Route::resource('users','UserController');
-    // Route::resource('produtos', 'ProductsController');
-});
+// Route::group([], function() {
+    
+//     // Route::resource('produtos', 'ProductsController');
+// });
+

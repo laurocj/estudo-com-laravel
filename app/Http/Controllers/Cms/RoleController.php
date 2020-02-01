@@ -1,29 +1,40 @@
 <?php
 
 
-namespace App\Http\Controllers;
-
+namespace App\Http\Controllers\Cms;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\User;
 use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
 use DB;
-use Hash;
 
 
-class UserController extends Controller
+class RoleController extends Controller
 {
-
     /**
-     * Folder to views
+     * Path to views
      */
-    private $_folder = 'users.';
+    private $_folder = 'cms.roles.';
 
     /**
      * Action Index in controller
      */
-    private $_actionIndex = 'UserController@index';
+    private $_actionIndex = 'RoleController@index';
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    function __construct()
+    {
+         $this->middleware('permission:role-list|role-create|role-edit|role-delete', ['only' => ['index','store']]);
+         $this->middleware('permission:role-create', ['only' => ['create','store']]);
+         $this->middleware('permission:role-edit', ['only' => ['edit','update']]);
+         $this->middleware('permission:role-delete', ['only' => ['destroy']]);
+    }
+
 
     /**
      * Display a listing of the resource.
@@ -32,8 +43,8 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-        $users = User::paginate(5);
-        return $this->showView( __FUNCTION__ ,compact('users'))
+        $roles = Role::orderBy('id','DESC')->paginate(5);
+        return $this->showView(__FUNCTION__,compact('roles'))
             ->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
@@ -45,8 +56,8 @@ class UserController extends Controller
      */
     public function create()
     {
-        $roles = Role::pluck('name','name')->all();
-        return $this->showView( __FUNCTION__ ,compact('roles'));
+        $permission = Permission::get();
+        return $this->showView(__FUNCTION__,compact('permission'));
     }
 
 
@@ -60,19 +71,12 @@ class UserController extends Controller
     {
         $this->validating($request);
 
-
-        $input = $request->all();
-        $input['password'] = Hash::make($input['password']);
-
-
-        $user = User::create($input);
-        $user->assignRole($request->input('roles'));
+        $role = Role::create(['name' => $request->input('name')]);
+        $role->syncPermissions($request->input('permission'));
 
 
-        return $this->returnStatusOk('User created successfully');
+        return $this->returnStatusOk('Role created successfully');
     }
-
-
     /**
      * Display the specified resource.
      *
@@ -81,8 +85,13 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        $user = User::find($id);
-        return view('users.show',compact('user'));
+        $role = Role::find($id);
+        $rolePermissions = Permission::join("role_has_permissions","role_has_permissions.permission_id","=","permissions.id")
+            ->where("role_has_permissions.role_id",$id)
+            ->get();
+
+
+        return $this->showView(__FUNCTION__,compact('role','rolePermissions'));
     }
 
 
@@ -94,17 +103,20 @@ class UserController extends Controller
      */
     public function edit($id)
     {
-        $user = User::find($id);
+        $role = Role::find($id);
 
-        if(empty($user)) {
+        if(empty($role)) {
             return $this->returnStatusNotOk(__('Not found!!'));
         }
 
-        $roles = Role::pluck('name','name')->all();
-        $userRole = $user->roles->pluck('name','name')->all();
+        $permission = Permission::get();
+        $rolePermissions = DB::table("role_has_permissions")
+                                ->where("role_has_permissions.role_id",$id)
+                                ->pluck('role_has_permissions.permission_id','role_has_permissions.permission_id')
+                                ->all();
 
 
-        return $this->showView( __FUNCTION__ ,compact('user','roles','userRole'));
+        return $this->showView(__FUNCTION__,compact('role','permission','rolePermissions'));
     }
 
 
@@ -117,30 +129,21 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $user = User::find($id);
+        $role = Role::find($id);
 
-        if(empty($user)) {
+        if(empty($role)) {
             return $this->returnStatusNotOk(__('Not found!!'));
         }
 
         $this->validating($request);
 
-        $input = $request->all();
-        if(!empty($input['password'])){
-            $input['password'] = Hash::make($input['password']);
-        }else{
-            $input = array_except($input,['password']);
-        }
+        $role->name = $request->input('name');
+        $role->save();
 
-        $user->update($input);
-        DB::table('model_has_roles')->where('model_id',$id)->delete();
+        $role->syncPermissions($request->input('permission'));
 
-        $user->assignRole($request->input('roles'));
-
-        return $this->returnStatusOk('User updated successfully');
+        return $this->returnStatusOk('Role updated successfully');
     }
-
-
     /**
      * Remove the specified resource from storage.
      *
@@ -149,15 +152,15 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-        $user = User::find($id);
+        $role = Role::find($id);
 
-        if(empty($user)){
-            return $this->returnStatusNotOk(__('Not found!'));
+        if(empty($role)) {
+            return $this->returnStatusNotOk(__('Not found!!'));
         } else {
-            $user->delete();
+            $role->delete();
         }
 
-        return $this->returnStatusOk('User deleted successfully');
+        return $this->returnStatusOk('Role deleted successfully');
     }
 
     /**
@@ -170,9 +173,7 @@ class UserController extends Controller
     {
         $request->validate([
             'name' => 'required',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|same:confirm-password',
-            'roles' => 'required'
+            'permission' => 'required',
         ]);
     }
 

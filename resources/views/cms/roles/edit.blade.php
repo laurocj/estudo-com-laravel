@@ -8,8 +8,18 @@
 
         return ' form-control ';
     }
+
+    function getCheckClassList($field,$errors) {
+        if($errors->has($field))
+            return ' form-check-input is-invalid ';
+
+        if(old($field) !== null)
+            return ' form-check-input is-valid ';
+
+        return ' form-check-input ';
+    }
 ?>
-@extends('layouts.app')
+@extends('cms.layouts.app')
 
 
 @section('content')
@@ -17,10 +27,11 @@
     <div class="col-12">
         <div class="card">
             <div class="card-header">
-                {{__('Create New Role')}}
+                {{__('Edit Role')}}
             </div>
             <div class="card-body">
-                {!! Form::open(array('route' => 'roles.store','method'=>'POST')) !!}
+            {!! Form::model($role, ['method' => 'PATCH','route' => ['regras.update', $role->id]]) !!}
+
                 <div class="form-group">
                     {{ Form::label('name', __('Title:')) }}
                     {{ Form::text('name', null, ['class'=>getClassList('name',$errors)]) }}
@@ -37,9 +48,12 @@
                     <strong>Permission:</strong>
                     <br/>
                     @foreach($permission as $value)
-                        <label>{{ Form::checkbox('permission[]', $value->id, in_array($value->id, $rolePermissions) ? true : false, array('class' => getClassList('permisson',$errors))) }}
-                        {{ $value->name }}</label>
-                    <br/>
+                        <div class="form-check">
+                            <label class='form-check-label'>
+                                {{ Form::checkbox('permission[]', $value->id, in_array($value->id, $rolePermissions), array('class' => getCheckClassList('permisson',$errors))) }}
+                            {{ $value->name }}
+                            </label>
+                        </div>
                     @endforeach
                     <div class="invalid-feedback">
                         @if($errors->has('name'))
@@ -54,7 +68,7 @@
                     {{ Form::submit('Save', array( 'class'=>'btn btn-danger' )) }}
                     <a class="btn btn-primary" href="{{ route('categorias.index') }}"> Back</a>
                 </div>
-                {!! Form::close() !!}
+            {!! Form::close() !!}
             </div>
         </div>
     </div>

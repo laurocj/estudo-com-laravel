@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('cms.layouts.app')
 
 
 @section('content')
@@ -9,7 +9,7 @@
                 <h2> Show Role</h2>
             </div>
             <div class="pull-right">
-                <a class="btn btn-primary" href="{{ route('roles.index') }}"> Back</a>
+                <a class="btn btn-primary" href="{{ route('regras.index') }}"> Back</a>
             </div>
         </div>
     </div>

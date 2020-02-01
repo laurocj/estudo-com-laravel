@@ -1,35 +1,28 @@
 <?php
 
-namespace App\Http\Controllers;
+
+namespace App\Http\Controllers\Cms;
 
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\User;
+use Spatie\Permission\Models\Role;
+use DB;
+use Hash;
 
-use App\Model\Product;
-use App\Model\Category;
 
-class ProductsController extends Controller
+class UserController extends Controller
 {
 
     /**
      * Folder to views
      */
-    private $_folder = 'products.';
+    private $_folder = 'cms.users.';
 
     /**
      * Action Index in controller
      */
-    private $_actionIndex = 'ProductsController@index';
-
-    /**
-     * Constructor
-     */
-    function __construct()
-    {
-        $this->middleware('permission:product-list|product-create|product-edit|product-delete', ['only' => ['index','show']]);
-        $this->middleware('permission:product-create', ['only' => ['create','store']]);
-        $this->middleware('permission:product-edit', ['only' => ['edit','update']]);
-        $this->middleware('permission:product-delete', ['only' => ['destroy']]);
-    }
+    private $_actionIndex = 'UserController@index';
 
     /**
      * Display a listing of the resource.
@@ -38,10 +31,11 @@ class ProductsController extends Controller
      */
     public function index(Request $request)
     {
-        $products = Product::paginate(5);
-        return $this->showView( __FUNCTION__ , compact('products'))
+        $users = User::paginate(5);
+        return $this->showView( __FUNCTION__ ,compact('users'))
             ->with('i', ($request->input('page', 1) - 1) * 5);
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -50,9 +44,10 @@ class ProductsController extends Controller
      */
     public function create()
     {
-        $categories = Category::all()->pluck('name','id');
-        return $this->showView( __FUNCTION__ , compact('categories'));
+        $roles = Role::pluck('name','name')->all();
+        return $this->showView( __FUNCTION__ ,compact('roles'));
     }
+
 
     /**
      * Store a newly created resource in storage.
@@ -64,15 +59,18 @@ class ProductsController extends Controller
     {
         $this->validating($request);
 
-        Product::create([
-            'name' => $request->name,
-            'stock' => $request->stock,
-            'price' => $request->price,
-            'category_id' => $request->category_id,
-        ]);
 
-        return $this->returnStatusOk('Created');
+        $input = $request->all();
+        $input['password'] = Hash::make($input['password']);
+
+
+        $user = User::create($input);
+        $user->assignRole($request->input('roles'));
+
+
+        return $this->returnStatusOk('User created successfully');
     }
+
 
     /**
      * Display the specified resource.
@@ -82,8 +80,10 @@ class ProductsController extends Controller
      */
     public function show($id)
     {
-        //
+        $user = User::find($id);
+        return view('users.show',compact('user'));
     }
+
 
     /**
      * Show the form for editing the specified resource.
@@ -93,16 +93,19 @@ class ProductsController extends Controller
      */
     public function edit($id)
     {
-        $product = Product::find($id);
+        $user = User::find($id);
 
-        if(empty($product)) {
+        if(empty($user)) {
             return $this->returnStatusNotOk(__('Not found!!'));
         }
 
-        $categories = Category::all()->pluck('name','id');
+        $roles = Role::pluck('name','name')->all();
+        $userRole = $user->roles->pluck('name','name')->all();
 
-        return $this->showView( __FUNCTION__ , compact('product','categories'));
+
+        return $this->showView( __FUNCTION__ ,compact('user','roles','userRole'));
     }
+
 
     /**
      * Update the specified resource in storage.
@@ -113,18 +116,29 @@ class ProductsController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $this->validating($request);
+        $user = User::find($id);
 
-        $product = Product::find($id);
-
-        if(empty($product)) {
+        if(empty($user)) {
             return $this->returnStatusNotOk(__('Not found!!'));
         }
 
-        $product->update($request->all());
+        $this->validating($request);
 
-        return $this->returnStatusOk('Updated');
+        $input = $request->all();
+        if(!empty($input['password'])){
+            $input['password'] = Hash::make($input['password']);
+        }else{
+            $input = array_except($input,['password']);
+        }
+
+        $user->update($input);
+        DB::table('model_has_roles')->where('model_id',$id)->delete();
+
+        $user->assignRole($request->input('roles'));
+
+        return $this->returnStatusOk('User updated successfully');
     }
+
 
     /**
      * Remove the specified resource from storage.
@@ -134,15 +148,15 @@ class ProductsController extends Controller
      */
     public function destroy($id)
     {
-        $product = Product::find($id);
+        $user = User::find($id);
 
-        if(empty($product)) {
-            return $this->returnStatusNotOk(__('Not found!!'));
+        if(empty($user)){
+            return $this->returnStatusNotOk(__('Not found!'));
         } else {
-            $product->delete();
+            $user->delete();
         }
 
-        return $this->returnStatusOk('Deleted');
+        return $this->returnStatusOk('User deleted successfully');
     }
 
     /**
@@ -154,10 +168,10 @@ class ProductsController extends Controller
     protected function validating(Request $request)
     {
         $request->validate([
-            'name' => 'required|unique:products|max:255',
-            'stock' => 'required|numeric|min:0',
-            'price' => 'required|numeric|min:0.01',
-            'category_id' => 'required',
+            'name' => 'required',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|same:confirm-password',
+            'roles' => 'required'
         ]);
     }
 
