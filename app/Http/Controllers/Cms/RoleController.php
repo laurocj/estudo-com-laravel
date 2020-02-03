@@ -4,23 +4,23 @@
 namespace App\Http\Controllers\Cms;
 
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Cms\CmsController;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use DB;
 
 
-class RoleController extends Controller
+class RoleController extends CmsController
 {
     /**
      * Path to views
      */
-    private $_folder = 'cms.roles.';
+    protected $_path = 'cms.roles.';
 
     /**
      * Action Index in controller
      */
-    private $_actionIndex = 'RoleController@index';
+    protected $_actionIndex = 'Cms\RoleController@index';
 
     /**
      * Display a listing of the resource.
@@ -43,9 +43,8 @@ class RoleController extends Controller
      */
     public function index(Request $request)
     {
-        $roles = Role::orderBy('id','DESC')->paginate(5);
-        return $this->showView(__FUNCTION__,compact('roles'))
-            ->with('i', ($request->input('page', 1) - 1) * 5);
+        $roles = Role::orderBy('id','DESC')->paginate($this->_itensPerPages);
+        return $this->showViewPaginate($request, __FUNCTION__,compact('roles'));
     }
 
 
@@ -75,7 +74,7 @@ class RoleController extends Controller
         $role->syncPermissions($request->input('permission'));
 
 
-        return $this->returnStatusOk('Role created successfully');
+        return $this->returnIndexStatusOk('Role created successfully');
     }
     /**
      * Display the specified resource.
@@ -91,7 +90,7 @@ class RoleController extends Controller
             ->get();
 
 
-        return $this->showView(__FUNCTION__,compact('role','rolePermissions'));
+        return $this->showView( __FUNCTION__ ,compact('role','rolePermissions'));
     }
 
 
@@ -106,7 +105,7 @@ class RoleController extends Controller
         $role = Role::find($id);
 
         if(empty($role)) {
-            return $this->returnStatusNotOk(__('Not found!!'));
+            return $this->returnIndexStatusNotOk(__('Not found!!'));
         }
 
         $permission = Permission::get();
@@ -132,7 +131,7 @@ class RoleController extends Controller
         $role = Role::find($id);
 
         if(empty($role)) {
-            return $this->returnStatusNotOk(__('Not found!!'));
+            return $this->returnIndexStatusNotOk(__('Not found!!'));
         }
 
         $this->validating($request);
@@ -142,7 +141,7 @@ class RoleController extends Controller
 
         $role->syncPermissions($request->input('permission'));
 
-        return $this->returnStatusOk('Role updated successfully');
+        return $this->returnIndexStatusOk('Role updated successfully');
     }
     /**
      * Remove the specified resource from storage.
@@ -155,12 +154,12 @@ class RoleController extends Controller
         $role = Role::find($id);
 
         if(empty($role)) {
-            return $this->returnStatusNotOk(__('Not found!!'));
+            return $this->returnIndexStatusNotOk(__('Not found!!'));
         } else {
             $role->delete();
         }
 
-        return $this->returnStatusOk('Role deleted successfully');
+        return $this->returnIndexStatusOk('Role deleted successfully');
     }
 
     /**
@@ -176,39 +175,4 @@ class RoleController extends Controller
             'permission' => 'required',
         ]);
     }
-
-    /**
-     * Return view
-     *
-     * @param string $name name of view
-     * @param array $data array data returned
-     *
-     * @return \Illuminate\Http\Response
-     */
-    protected function showView($name,$data = [])
-    {
-        return view($this->_folder.$name,$data);
-    }
-
-    /**
-     * Redirect with ok status
-     * @param string $status
-     *
-     * @return \Illuminate\Http\Response
-     */
-     protected function returnStatusOk($status)
-     {
-        return redirect()->action($this->_actionIndex)->with('status',$status);
-     }
-
-     /**
-     * Redirect with status not ok
-     * @param string $status
-     *
-     * @return \Illuminate\Http\Response
-     */
-     protected function returnStatusNotOk($status)
-     {
-        return redirect()->action($this->_actionIndex)->with('status_error',$status);
-     }
 }

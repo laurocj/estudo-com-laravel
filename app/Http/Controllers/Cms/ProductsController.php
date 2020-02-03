@@ -2,23 +2,23 @@
 
 namespace App\Http\Controllers\Cms;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Cms\CmsController;
 use Illuminate\Http\Request;
 use App\Model\Product;
 use App\Model\Category;
 
-class ProductsController extends Controller
+class ProductsController extends CmsController
 {
 
     /**
-     * Folder to views
+     * Path to views
      */
-    private $_folder = 'cms.products.';
+    protected $_path = 'cms.products.';
 
     /**
      * Action Index in controller
      */
-    private $_actionIndex = 'ProductsController@index';
+    protected $_actionIndex = 'Cms\ProductsController@index';
 
     /**
      * Constructor
@@ -38,9 +38,8 @@ class ProductsController extends Controller
      */
     public function index(Request $request)
     {
-        $products = Product::paginate(5);
-        return $this->showView( __FUNCTION__ , compact('products'))
-            ->with('i', ($request->input('page', 1) - 1) * 5);
+        $products = Product::paginate($this->_itensPerPages);
+        return $this->showViewPaginate($request, __FUNCTION__ , compact('products'));
     }
 
     /**
@@ -71,7 +70,7 @@ class ProductsController extends Controller
             'category_id' => $request->category_id,
         ]);
 
-        return $this->returnStatusOk('Created');
+        return $this->returnIndexStatusOk('Created');
     }
 
     /**
@@ -96,7 +95,7 @@ class ProductsController extends Controller
         $product = Product::find($id);
 
         if(empty($product)) {
-            return $this->returnStatusNotOk(__('Not found!!'));
+            return $this->returnIndexStatusNotOk(__('Not found!!'));
         }
 
         $categories = Category::all()->pluck('name','id');
@@ -118,12 +117,12 @@ class ProductsController extends Controller
         $product = Product::find($id);
 
         if(empty($product)) {
-            return $this->returnStatusNotOk(__('Not found!!'));
+            return $this->returnIndexStatusNotOk(__('Not found!!'));
         }
 
         $product->update($request->all());
 
-        return $this->returnStatusOk('Updated');
+        return $this->returnIndexStatusOk('Updated');
     }
 
     /**
@@ -137,12 +136,12 @@ class ProductsController extends Controller
         $product = Product::find($id);
 
         if(empty($product)) {
-            return $this->returnStatusNotOk(__('Not found!!'));
+            return $this->returnIndexStatusNotOk(__('Not found!!'));
         } else {
             $product->delete();
         }
 
-        return $this->returnStatusOk('Deleted');
+        return $this->returnIndexStatusOk('Deleted');
     }
 
     /**
@@ -160,39 +159,4 @@ class ProductsController extends Controller
             'category_id' => 'required',
         ]);
     }
-
-    /**
-     * Return view
-     *
-     * @param string $name name of view
-     * @param array $data array data returned
-     *
-     * @return \Illuminate\Http\Response
-     */
-    protected function showView($name,$data = [])
-    {
-        return view($this->_folder.$name,$data);
-    }
-
-    /**
-     * Redirect with ok status
-     * @param string $status
-     *
-     * @return \Illuminate\Http\Response
-     */
-     protected function returnStatusOk($status)
-     {
-        return redirect()->action($this->_actionIndex)->with('status',$status);
-     }
-
-     /**
-     * Redirect with status not ok
-     * @param string $status
-     *
-     * @return \Illuminate\Http\Response
-     */
-     protected function returnStatusNotOk($status)
-     {
-        return redirect()->action($this->_actionIndex)->with('status_error',$status);
-     }
 }

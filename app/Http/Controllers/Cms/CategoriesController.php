@@ -2,24 +2,24 @@
 
 namespace App\Http\Controllers\Cms;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Cms\CmsController;
 
 use Illuminate\Http\Request;
 
 use App\Model\Category;
 
-class CategoriesController extends Controller
+class CategoriesController extends CmsController
 {
 
     /**
      * Path to views
      */
-    private $_path = 'cms.categories.';
+    protected $_path = 'cms.categories.';
 
     /**
      * Action Index in controller
      */
-    private $_actionIndex = 'CategoriesController@index';
+    protected $_actionIndex = 'Cms\CategoriesController@index';
 
     /**
      * Display a listing of the resource.
@@ -28,9 +28,8 @@ class CategoriesController extends Controller
      */
     public function index(Request $request)
     {
-        $categories = Category::paginate(5);
-        return $this->showView( __FUNCTION__ , compact('categories'))
-            ->with('i', ($request->input('page', 1) - 1) * 5);
+        $categories = Category::paginate($this->_itensPerPages);
+        return $this->showViewPaginate($request, __FUNCTION__ , compact('categories'));
     }
 
     /**
@@ -124,41 +123,5 @@ class CategoriesController extends Controller
         }
 
         return $this->returnIndexStatusOk('Deleted');
-    }
-
-    /**
-     * Return view
-     * 
-     * @param string $name name of view
-     * @param array $data array data returned
-     * 
-     * @return \Illuminate\Http\Response
-     */
-    protected function showView($name,$data = [])
-    {
-        return view($this->_path.$name,$data);
-    }
-
-    /**
-     * Redirect with ok status
-     * @param string $status
-     * 
-     * @return \Illuminate\Http\Response
-     */
-     protected function returnIndexStatusOk($status)
-     {         
-        return redirect()->action($this->_actionIndex)->with('status',$status);
-     }
-
-     /**
-     * Redirect with status not ok
-     * @param string $status
-     * 
-     * @return \Illuminate\Http\Response
-     */
-     protected function returnIndexStatusNotOk($status)
-     {         
-        return redirect()->action($this->_actionIndex)->with('status_error',$status);
-     }
-     
+    }     
 }

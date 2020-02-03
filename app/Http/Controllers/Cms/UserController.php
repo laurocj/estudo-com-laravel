@@ -4,25 +4,25 @@
 namespace App\Http\Controllers\Cms;
 
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Cms\CmsController;
 use App\User;
 use Spatie\Permission\Models\Role;
 use DB;
 use Hash;
 
 
-class UserController extends Controller
+class UserController extends CmsController
 {
 
     /**
-     * Folder to views
+     * Path to views
      */
-    private $_folder = 'cms.users.';
+    protected $_path = 'cms.users.';
 
     /**
      * Action Index in controller
      */
-    private $_actionIndex = 'UserController@index';
+    protected $_actionIndex = 'Cms\UserController@index';
 
     /**
      * Display a listing of the resource.
@@ -31,9 +31,9 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-        $users = User::paginate(5);
-        return $this->showView( __FUNCTION__ ,compact('users'))
-            ->with('i', ($request->input('page', 1) - 1) * 5);
+        $users = User::paginate($this->_itensPerPages);
+        return $this->showViewPaginate($request, __FUNCTION__ ,compact('users'));
+            
     }
 
 
@@ -68,7 +68,7 @@ class UserController extends Controller
         $user->assignRole($request->input('roles'));
 
 
-        return $this->returnStatusOk('User created successfully');
+        return $this->returnIndexStatusOk('User created successfully');
     }
 
 
@@ -81,7 +81,7 @@ class UserController extends Controller
     public function show($id)
     {
         $user = User::find($id);
-        return view('users.show',compact('user'));
+        return $this->showView( __FUNCTION__ ,compact('user'));
     }
 
 
@@ -96,7 +96,7 @@ class UserController extends Controller
         $user = User::find($id);
 
         if(empty($user)) {
-            return $this->returnStatusNotOk(__('Not found!!'));
+            return $this->returnIndexStatusNotOk(__('Not found!!'));
         }
 
         $roles = Role::pluck('name','name')->all();
@@ -119,7 +119,7 @@ class UserController extends Controller
         $user = User::find($id);
 
         if(empty($user)) {
-            return $this->returnStatusNotOk(__('Not found!!'));
+            return $this->returnIndexStatusNotOk(__('Not found!!'));
         }
 
         $this->validating($request);
@@ -136,7 +136,7 @@ class UserController extends Controller
 
         $user->assignRole($request->input('roles'));
 
-        return $this->returnStatusOk('User updated successfully');
+        return $this->returnIndexStatusOk('User updated successfully');
     }
 
 
@@ -151,12 +151,12 @@ class UserController extends Controller
         $user = User::find($id);
 
         if(empty($user)){
-            return $this->returnStatusNotOk(__('Not found!'));
+            return $this->returnIndexStatusNotOk(__('Not found!'));
         } else {
             $user->delete();
         }
 
-        return $this->returnStatusOk('User deleted successfully');
+        return $this->returnIndexStatusOk('User deleted successfully');
     }
 
     /**
@@ -174,39 +174,4 @@ class UserController extends Controller
             'roles' => 'required'
         ]);
     }
-
-    /**
-     * Return view
-     *
-     * @param string $name name of view
-     * @param array $data array data returned
-     *
-     * @return \Illuminate\Http\Response
-     */
-    protected function showView($name,$data = [])
-    {
-        return view($this->_folder.$name,$data);
-    }
-
-    /**
-     * Redirect with ok status
-     * @param string $status
-     *
-     * @return \Illuminate\Http\Response
-     */
-     protected function returnStatusOk($status)
-     {
-        return redirect()->action($this->_actionIndex)->with('status',$status);
-     }
-
-     /**
-     * Redirect with status not ok
-     * @param string $status
-     *
-     * @return \Illuminate\Http\Response
-     */
-     protected function returnStatusNotOk($status)
-     {
-        return redirect()->action($this->_actionIndex)->with('status_error',$status);
-     }
 }
