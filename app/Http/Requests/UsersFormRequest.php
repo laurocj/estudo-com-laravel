@@ -25,9 +25,24 @@ class UsersFormRequest extends FormRequest
     {
         return [
             'name' => 'required',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|same:confirm-password',
+            'email' => 'required|email|unique:users,email,'.$this->getIdInUrl(),
+            'password' => 'confirmed|same:password_confirmation',
             'roles' => 'required'
         ];
+    }
+
+    /**
+     * Retrieve the id in the url
+     * 
+     * @return int
+     */
+    private function getIdInUrl() : int
+    {
+        foreach($this->segments() as $segment) {
+            if(is_numeric($segment)){
+                return $segment;
+            }
+        }
+        return 0;
     }
 }

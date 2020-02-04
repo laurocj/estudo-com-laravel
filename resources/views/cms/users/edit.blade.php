@@ -44,28 +44,6 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        {{ Form::label('password', __('Password:')) }}
-                        {{ Form::text('password', null, ['class'=> getClassList('password',$errors)]) }}
-                        <div class="invalid-feedback">
-                            @if($errors->has('password'))
-                                @foreach($errors->get('password') as $msg)
-                                {{$msg}}<br/>
-                                @endforeach
-                            @endif
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        {{ Form::label('confirm-password', __('Confirm password:')) }}
-                        {{ Form::text('confirm-password', null, ['class'=> getClassList('confirm-password',$errors)]) }}
-                        <div class="invalid-feedback">
-                            @if($errors->has('confirm-password'))
-                                @foreach($errors->get('confirm-password') as $msg)
-                                {{$msg}}<br/>
-                                @endforeach
-                            @endif
-                        </div>
-                    </div>
-                    <div class="form-group">
                         {{ Form::label('roles[]', __('Roles:')) }}
                         {{ Form::select('roles[]', $roles,$userRole, ['multiple','class'=> getClassList('roles[]',$errors)]) }}
                         <div class="invalid-feedback">
@@ -78,7 +56,7 @@
                     </div>
                     <div class="form-group">
                         {{ Form::submit('Save', array( 'class'=>'btn btn-danger' )) }}
-                        <a class="btn btn-primary" href="{{ route('regras.index') }}"> Back</a>
+                        <a class="btn btn-primary" href="{{ route('users.index') }}"> Back</a>
                     </div>
                 {!! Form::close() !!}
             </div>

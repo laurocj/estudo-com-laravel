@@ -66,7 +66,7 @@
 
                 <div class="form-group">
                     {{ Form::submit('Save', array( 'class'=>'btn btn-danger' )) }}
-                    <a class="btn btn-primary" href="{{ route('categorias.index') }}"> Back</a>
+                    <a class="btn btn-primary" href="{{ route('regras.index') }}"> Back</a>
                 </div>
             {!! Form::close() !!}
             </div>
