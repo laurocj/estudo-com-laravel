@@ -34,6 +34,18 @@ class CmsController extends BaseController
     protected $_layout = 'cms.layouts.app';
 
     /**
+     * Contruct
+     * @param string $modalPermission name of model
+     */
+    function __construct($modalPermission)
+    {
+        $this->middleware("permission:$modalPermission-list|$modalPermission-create|$modalPermission-edit|$modalPermission-delet", ['only' => ['index','store']]);
+        $this->middleware("permission:$modalPermission-create", ['only' => ['create','store']]);
+        $this->middleware("permission:$modalPermission-edit", ['only' => ['edit','update']]);
+        $this->middleware("permission:$modalPermission-delete", ['only' => ['destroy']]);
+    }
+
+    /**
      * Return view
      * 
      * @param string $name name of view

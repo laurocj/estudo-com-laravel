@@ -22,6 +22,14 @@ class CategoriesController extends CmsController
     protected $_actionIndex = 'Cms\CategoriesController@index';
 
     /**
+     * Construct
+     */
+    function __construct()
+    {
+        parent::__construct('category');
+    }
+
+    /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response

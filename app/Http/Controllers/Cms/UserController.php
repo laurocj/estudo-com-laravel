@@ -25,6 +25,14 @@ class UserController extends CmsController
     protected $_actionIndex = 'Cms\UserController@index';
 
     /**
+     * Construct
+     */
+    function __construct()
+    {
+        parent::__construct('user');
+    }
+
+    /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
