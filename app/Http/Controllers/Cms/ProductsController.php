@@ -21,7 +21,7 @@ class ProductsController extends CmsController
     protected $_actionIndex = 'Cms\ProductsController@index';
 
     /**
-     * Constructor
+     * Construct
      */
     function __construct()
     {

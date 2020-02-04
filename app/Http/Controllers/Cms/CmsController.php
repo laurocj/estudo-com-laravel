@@ -28,6 +28,10 @@ class CmsController extends BaseController
      */
     protected $_itensPerPages = 5;
 
+    /**
+     * Layout default
+     */
+    protected $_layout = 'cms.layouts.app';
 
     /**
      * Return view
@@ -39,6 +43,8 @@ class CmsController extends BaseController
      */
     protected function showView($name,$data = [])
     {
+        $data['layout'] = $this->_layout;
+
         return view($this->_path.$name,$data);
     }
 

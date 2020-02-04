@@ -19,7 +19,7 @@
         return ' form-check-input ';
     }
 ?>
-@extends('cms.layouts.app')
+@extends($layout)
 
 
 @section('content')

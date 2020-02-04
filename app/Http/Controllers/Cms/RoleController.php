@@ -23,9 +23,7 @@ class RoleController extends CmsController
     protected $_actionIndex = 'Cms\RoleController@index';
 
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
+     * Construct
      */
     function __construct()
     {
