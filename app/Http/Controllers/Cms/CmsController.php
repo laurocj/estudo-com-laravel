@@ -39,6 +39,7 @@ class CmsController extends BaseController
      */
     function __construct($modalPermission)
     {
+        $this->middleware('auth');
         $this->middleware("permission:$modalPermission-list|$modalPermission-create|$modalPermission-edit|$modalPermission-delet", ['only' => ['index','store']]);
         $this->middleware("permission:$modalPermission-create", ['only' => ['create','store']]);
         $this->middleware("permission:$modalPermission-edit", ['only' => ['edit','update']]);
