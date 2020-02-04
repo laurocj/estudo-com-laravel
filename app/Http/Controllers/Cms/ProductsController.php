@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Cms;
 
 use App\Http\Controllers\Cms\CmsController;
+use App\Http\Requests\ProductsFormRequest;
 use Illuminate\Http\Request;
 use App\Model\Product;
 use App\Model\Category;
@@ -53,13 +54,11 @@ class ProductsController extends CmsController
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  App\Http\Requests\ProductsFormRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(ProductsFormRequest $request)
     {
-        $this->validating($request);
-
         Product::create([
             'name' => $request->name,
             'stock' => $request->stock,
@@ -103,14 +102,12 @@ class ProductsController extends CmsController
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  App\Http\Requests\ProductsFormRequest  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(ProductsFormRequest $request, $id)
     {
-        $this->validating($request);
-
         $product = Product::find($id);
 
         if(empty($product)) {
@@ -139,21 +136,5 @@ class ProductsController extends CmsController
         }
 
         return $this->returnIndexStatusOk('Deleted');
-    }
-
-    /**
-     * Regras de validação
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return void
-     */
-    protected function validating(Request $request)
-    {
-        $request->validate([
-            'name' => 'required|unique:products|max:255',
-            'stock' => 'required|numeric|min:0',
-            'price' => 'required|numeric|min:0.01',
-            'category_id' => 'required',
-        ]);
     }
 }

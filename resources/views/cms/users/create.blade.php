@@ -67,7 +67,7 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    {{ Form::label('roles', __('Title:')) }}
+                    {{ Form::label('roles', __('Roles:')) }}
                     {!! Form::select('roles[]', $roles,[], array('class' => 'form-control','multiple')) !!}
                     <div class="invalid-feedback">
                         @if($errors->has('roles'))

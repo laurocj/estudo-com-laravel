@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Cms;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Cms\CmsController;
+use App\Http\Requests\RolesFormRequest;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use DB;
@@ -58,12 +59,11 @@ class RoleController extends CmsController
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  App\Http\Requests\RolesFormRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(RolesFormRequest $request)
     {
-        $this->validating($request);
 
         $role = Role::create(['name' => $request->input('name')]);
         $role->syncPermissions($request->input('permission'));
@@ -117,19 +117,17 @@ class RoleController extends CmsController
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  App\Http\Requests\RolesFormRequest  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(RolesFormRequest $request, $id)
     {
         $role = Role::find($id);
 
         if(empty($role)) {
             return $this->returnIndexStatusNotOk(__('Not found!!'));
         }
-
-        $this->validating($request);
 
         $role->name = $request->input('name');
         $role->save();
@@ -157,17 +155,4 @@ class RoleController extends CmsController
         return $this->returnIndexStatusOk('Role deleted successfully');
     }
 
-    /**
-     * Regras de validação
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return void
-     */
-    protected function validating(Request $request)
-    {
-        $request->validate([
-            'name' => 'required',
-            'permission' => 'required',
-        ]);
-    }
 }

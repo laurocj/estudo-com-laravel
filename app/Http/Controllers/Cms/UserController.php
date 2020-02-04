@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Cms;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Cms\CmsController;
+use App\Http\Requests\UsersFormRequest;
 use App\User;
 use Spatie\Permission\Models\Role;
 use DB;
@@ -60,21 +61,16 @@ class UserController extends CmsController
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  App\Http\Requests\UsersFormRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(UsersFormRequest $request)
     {
-        $this->validating($request);
-
-
         $input = $request->all();
         $input['password'] = Hash::make($input['password']);
 
-
         $user = User::create($input);
         $user->assignRole($request->input('roles'));
-
 
         return $this->returnIndexStatusOk('User created successfully');
     }
@@ -118,19 +114,17 @@ class UserController extends CmsController
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  App\Http\Requests\UsersFormRequest  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UsersFormRequest $request, $id)
     {
         $user = User::find($id);
 
         if(empty($user)) {
             return $this->returnIndexStatusNotOk(__('Not found!!'));
         }
-
-        $this->validating($request);
 
         $input = $request->all();
         if(!empty($input['password'])){
@@ -165,21 +159,5 @@ class UserController extends CmsController
         }
 
         return $this->returnIndexStatusOk('User deleted successfully');
-    }
-
-    /**
-     * Regras de validação
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return void
-     */
-    protected function validating(Request $request)
-    {
-        $request->validate([
-            'name' => 'required',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|same:confirm-password',
-            'roles' => 'required'
-        ]);
     }
 }

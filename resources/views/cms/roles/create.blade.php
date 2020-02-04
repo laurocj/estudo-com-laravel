@@ -8,6 +8,16 @@
 
         return ' form-control ';
     }
+
+    function getCheckClassList($field,$errors) {
+        if($errors->has($field))
+            return ' form-check-input is-invalid ';
+
+        if(old($field) !== null)
+            return ' form-check-input is-valid ';
+
+        return ' form-check-input ';
+    }
 ?>
 @extends($layout)
 
@@ -35,12 +45,16 @@
 
                 <div class="form-group">
                     <strong>Permission:</strong>
-                    <br/>
+
                     @foreach($permission as $value)
-                        <label>{{ Form::checkbox('permission[]', $value->id, in_array($value->id, $rolePermissions) ? true : false, array('class' => getClassList('permisson',$errors))) }}
-                        {{ $value->name }}</label>
-                    <br/>
+                        <div class="form-check">
+                            <label class='form-check-label'>
+                                {{ Form::checkbox('permission[]', $value->id, false, array('class' => getCheckClassList('permisson',$errors))) }}
+                            {{ $value->name }}
+                            </label>
+                        </div>
                     @endforeach
+
                     <div class="invalid-feedback">
                         @if($errors->has('name'))
                             @foreach($errors->get('name') as $msg)

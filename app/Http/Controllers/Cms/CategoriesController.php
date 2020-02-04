@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Cms;
 
 use App\Http\Controllers\Cms\CmsController;
+use App\Http\Requests\CategoriesFormRequest;
 
 use Illuminate\Http\Request;
 
@@ -53,10 +54,10 @@ class CategoriesController extends CmsController
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  App\Http\Requests\CategoriesFormRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(CategoriesFormRequest $request)
     {
         Category::create([
             'name' => $request->name
@@ -97,11 +98,11 @@ class CategoriesController extends CmsController
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  App\Http\Requests\CategoriesFormRequest  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(CategoriesFormRequest $request, $id)
     {
         $category = Category::find($id);
 
