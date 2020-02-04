@@ -4,12 +4,13 @@
 namespace App\Http\Controllers\Cms;
 
 use Illuminate\Http\Request;
-use App\Http\Controllers\Cms\CmsController;
-use App\Http\Requests\RolesFormRequest;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use DB;
 
+use App\Http\Controllers\Cms\CmsController;
+use App\Http\Requests\RolesFormRequest;
+use App\Services\RolesService;
 
 class RoleController extends CmsController
 {
@@ -62,12 +63,12 @@ class RoleController extends CmsController
      * @param  App\Http\Requests\RolesFormRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(RolesFormRequest $request)
+    public function store(RolesFormRequest $request,RolesService $rolesService)
     {
-
-        $role = Role::create(['name' => $request->input('name')]);
-        $role->syncPermissions($request->input('permission'));
-
+        $role = $rolesService->createRoles(
+            $request->input('name'),
+            $request->input('permission')
+        );
 
         return $this->returnIndexStatusOk('Role created successfully');
     }
