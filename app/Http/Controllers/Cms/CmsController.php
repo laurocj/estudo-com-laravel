@@ -79,27 +79,27 @@ class CmsController extends BaseController
 
     /**
      * Redirect with ok status
-     * @param string $status
+     * @param string $msg
      * 
      * @return \Illuminate\Http\Response
      */
-     protected function returnIndexStatusOk($status)
+     protected function returnIndexStatusOk($msg)
      {         
         return redirect()
             ->action($this->_actionIndex)
-            ->with($this->_varStatusOk,$status);
+            ->with($this->_varStatusOk,$msg);
      }
 
      /**
      * Redirect with status not ok
-     * @param string $status
+     * @param string $msg
      * 
      * @return \Illuminate\Http\Response
      */
-     protected function returnIndexStatusNotOk($status)
+     protected function returnIndexStatusNotOk($msg)
      {         
         return redirect()
             ->action($this->_actionIndex)
-            ->with($this->_varStatusNok,$status);
+            ->with($this->_varStatusNok,$msg);
      }
 }

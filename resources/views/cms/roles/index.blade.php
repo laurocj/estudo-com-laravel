@@ -4,16 +4,8 @@
 @section('content')
 <div class="container">
     <div class="col-12">
-        @if (session('status'))
-            <div class="alert alert-success">
-                {{ session('status') }}
-            </div>
-        @endif
-        @if (session('status_error'))
-            <div class="alert alert-danger">
-                {{ session('status_error') }}
-            </div>
-        @endif
+        @component('cms.layouts.component.alert')
+        @endcomponent
         <div class="card">
             <div class="card-header">
                 <div class="row">
