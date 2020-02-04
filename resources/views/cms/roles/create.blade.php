@@ -1,26 +1,4 @@
-<?php
-    function getClassList($field,$errors) {
-        if($errors->has($field))
-            return ' form-control is-invalid ';
-
-        if(old($field) !== null)
-            return ' form-control is-valid ';
-
-        return ' form-control ';
-    }
-
-    function getCheckClassList($field,$errors) {
-        if($errors->has($field))
-            return ' form-check-input is-invalid ';
-
-        if(old($field) !== null)
-            return ' form-check-input is-valid ';
-
-        return ' form-check-input ';
-    }
-?>
 @extends($layout)
-
 
 @section('content')
 <div class="container">
@@ -33,7 +11,7 @@
                 {!! Form::open(array('route' => 'regras.store','method'=>'POST')) !!}
                 <div class="form-group">
                     {{ Form::label('name', __('Title:')) }}
-                    {{ Form::text('name', null, ['class'=>getClassList('name',$errors)]) }}
+                    {{ Form::text('name', null, ['class'=> classValidOrInvalidForInput('name',$errors)]) }}
                     <div class="invalid-feedback">
                         @if($errors->has('name'))
                             @foreach($errors->get('name') as $msg)
@@ -49,7 +27,7 @@
                     @foreach($permission as $value)
                         <div class="form-check">
                             <label class='form-check-label'>
-                                {{ Form::checkbox('permission[]', $value->id, false, array('class' => getCheckClassList('permisson',$errors))) }}
+                                {{ Form::checkbox('permission[]', $value->id, false, array('class'=> classValidOrInvalidForCheck('permisson',$errors))) }}
                             {{ $value->name }}
                             </label>
                         </div>

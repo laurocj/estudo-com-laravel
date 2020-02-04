@@ -1,14 +1,3 @@
-<?php
-    function getClassList($field,$errors) {
-        if($errors->has($field))
-            return ' form-control is-invalid ';
-
-        if(old($field) !== null)
-            return ' form-control is-valid ';
-
-        return ' form-control ';
-    }
-?>
 @extends($layout)
 
 @section('content')
@@ -22,7 +11,7 @@
                 {!! Form::open(array('route' => 'users.store','method'=>'POST')) !!}
                 <div class="form-group">
                     {{ Form::label('name', __('Name:')) }}
-                    {{ Form::text('name', null, ['class'=>getClassList('name',$errors)]) }}
+                    {{ Form::text('name', null, ['class'=> classValidOrInvalidForInput('name',$errors)]) }}
                     <div class="invalid-feedback">
                         @if($errors->has('name'))
                             @foreach($errors->get('name') as $msg)
@@ -34,7 +23,7 @@
 
                 <div class="form-group">
                     {{ Form::label('email', __('E-mail:')) }}
-                    {{ Form::text('email', null, ['class'=>getClassList('email',$errors)]) }}
+                    {{ Form::text('email', null, ['class'=> classValidOrInvalidForInput('email',$errors)]) }}
                     <div class="invalid-feedback">
                         @if($errors->has('email'))
                             @foreach($errors->get('email') as $msg)
@@ -45,7 +34,7 @@
                 </div>
                 <div class="form-group">
                     {{ Form::label('password', __('Password:')) }}
-                    {{ Form::text('password', null, ['class'=>getClassList('password',$errors)]) }}
+                    {{ Form::text('password', null, ['class'=> classValidOrInvalidForInput('password',$errors)]) }}
                     <div class="invalid-feedback">
                         @if($errors->has('password'))
                             @foreach($errors->get('password') as $msg)
@@ -57,7 +46,7 @@
 
                 <div class="form-group">
                     {{ Form::label('password_confirmation', __('Confirm password:')) }}
-                    {{ Form::text('password_confirmation', null, ['class'=>getClassList('password_confirmation',$errors)]) }}
+                    {{ Form::text('password_confirmation', null, ['class'=> classValidOrInvalidForInput('password_confirmation',$errors)]) }}
                     <div class="invalid-feedback">
                         @if($errors->has('password_confirmation'))
                             @foreach($errors->get('password_confirmation') as $msg)

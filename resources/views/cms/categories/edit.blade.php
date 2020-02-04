@@ -1,14 +1,3 @@
-<?php
-    function getClassList($field,$errors) {
-        if($errors->has($field))
-            return ' form-control is-invalid ';
-
-        if(old($field) !== null)
-            return ' form-control is-valid ';
-
-        return ' form-control ';
-    }
-?>
 @extends($layout)
 
 @section('content')
@@ -22,7 +11,7 @@
                 {{ Form::model($category, array('route' => ['categorias.update',$category->id],'method' => 'put' )) }}
                     <div class="form-group">
                         {{ Form::label('name', __('Title:')) }}
-                        {{ Form::text('name', null, ['class'=>getClassList('name',$errors)]) }}
+                        {{ Form::text('name', null, ['class'=> classValidOrInvalidForInput('name',$errors)]) }}
                         <div class="invalid-feedback">
                             @if($errors->has('name'))
                                 @foreach($errors->get('name') as $msg)
