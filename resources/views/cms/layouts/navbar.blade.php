@@ -1,5 +1,5 @@
 <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
-    <div class="container">
+    <div class="container-fluid">
         <a class="navbar-brand" href="{{ url('/') }}">
             {{ config('app.name') }}
         </a>
@@ -9,12 +9,12 @@
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <!-- Left Side Of Navbar -->
-            <ul class="navbar-nav mr-auto">
+            {{-- <ul class="navbar-nav mr-auto">
                 <li class="nav-item">
                     <a class="nav-link {{ Route::is('categorias.*') ? 'active' : '' }}"
                         href="{{ route('categorias.index') }}">{{ __('Categories') }}</a>
                 </li>
-                
+
                 <li class="nav-item">
                     <a class="nav-link {{ Route::is('produtos.*') ? 'active' : '' }}"
                         href="{{ route('produtos.index') }}">{{ __('Products') }}</a>
@@ -32,7 +32,7 @@
                         href="{{ route('users.index') }}">{{ __('Users') }}</a>
                 </li>
 
-            </ul>
+            </ul> --}}
 
             <!-- Right Side Of Navbar -->
             <ul class="navbar-nav ml-auto">

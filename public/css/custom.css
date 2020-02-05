@@ -1,0 +1,13 @@
+.nav .nav-item .nav-link {
+    font-weight: 800;
+    color: lightslategray;
+}
+.nav .nav-item .nav-link.active {
+    color: #007bff;
+}
+
+body{
+    height: 94vh;
+    background-color: #fff;
+    font-size:initial;
+}
