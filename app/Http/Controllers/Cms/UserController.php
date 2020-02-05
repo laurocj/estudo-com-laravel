@@ -8,8 +8,8 @@ use App\Http\Controllers\Cms\CmsController;
 use App\Http\Requests\UsersFormRequest;
 use App\User;
 use Spatie\Permission\Models\Role;
-use DB;
-use Hash;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 
 class UserController extends CmsController
@@ -42,7 +42,7 @@ class UserController extends CmsController
     {
         $users = User::paginate($this->_itensPerPages);
         return $this->showViewPaginate($request, __FUNCTION__ ,compact('users'));
-            
+
     }
 
 

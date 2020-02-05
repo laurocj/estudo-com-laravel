@@ -4,9 +4,9 @@
 namespace App\Http\Controllers\Cms;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
-use DB;
 
 use App\Http\Controllers\Cms\CmsController;
 use App\Http\Requests\RolesFormRequest;
