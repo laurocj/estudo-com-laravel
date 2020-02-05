@@ -11,21 +11,9 @@
             <!-- Left Side Of Navbar -->
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item">
-                    <a class="nav-link {{ Route::is('categorias.*') ? 'active' : '' }}"
-                        href="{{ route('categorias.index') }}">{{ __('Categories') }}</a>
+                    <a class="nav-link"
+                        href="#">{{ __('Test') }}</a>
                 </li>
-                
-                <li class="nav-item">
-                    <a class="nav-link {{ Route::is('produtos.*') ? 'active' : '' }}"
-                        href="{{ route('produtos.index') }}">{{ __('Products') }}</a>
-                </li>
-
-                @can('role-list')
-                <li class="nav-item">
-                    <a class="nav-link {{ Route::is('regras.*') ? 'active' : '' }}"
-                        href="{{ route('regras.index') }}">{{ __('Roles') }}</a>
-                </li>
-                @endcan
 
             </ul>
 

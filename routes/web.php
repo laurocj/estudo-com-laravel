@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -11,11 +13,7 @@
 |
 */
 
-Route::get('/', function () {
-    return view('home');
-});
-
-
+Route::get('/', 'HomeController@index')->name('home');
 
 Route::group(['prefix' => 'cms','middleware' => ['auth']], function () {
     Route::get('/', 'Cms\DashboardController@index');
@@ -25,8 +23,7 @@ Route::group(['prefix' => 'cms','middleware' => ['auth']], function () {
     Route::resource('categorias', 'Cms\CategoriesController');
 });
 
-
 Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');
+
 

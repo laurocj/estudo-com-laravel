@@ -8,7 +8,6 @@
                 <div class="card-header">Page index</div>
 
                 <div class="card-body">
-                    You are logged in!
                 </div>
             </div>
         </div>
