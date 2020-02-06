@@ -64,6 +64,7 @@ class CategoryService extends PaginatedAbstract {
     /**
      * Delete the Category from the database.
      *
+     * @param Category $category
      * @return bool|null
      *
      * @throws \Exception
