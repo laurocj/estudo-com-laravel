@@ -38,7 +38,7 @@ class CategoriesController extends CmsController
     public function index(Request $request)
     {
         $categories = Category::paginate($this->_itensPerPages);
-        return $this->showViewPaginate($request, __FUNCTION__ , compact('categories'));
+        return $this->showView( __FUNCTION__ , compact('categories'));
     }
 
     /**
@@ -91,7 +91,7 @@ class CategoriesController extends CmsController
             return $this->returnIndexStatusNotOk(__('Not found!!'));
         }
 
-        
+
         return $this->showView( __FUNCTION__ , compact('category'));
     }
 
@@ -111,7 +111,7 @@ class CategoriesController extends CmsController
         }
 
         $category->name = $request->input('name');
-        
+
         $category->save();
 
         return $this->returnIndexStatusOk('Updated');
@@ -132,5 +132,5 @@ class CategoriesController extends CmsController
         }
 
         return $this->returnIndexStatusOk('Deleted');
-    }     
+    }
 }

@@ -41,7 +41,7 @@ class UserController extends CmsController
     public function index(Request $request)
     {
         $users = User::paginate($this->_itensPerPages);
-        return $this->showViewPaginate($request, __FUNCTION__ ,compact('users'));
+        return $this->showView( __FUNCTION__ ,compact('users'));
 
     }
 

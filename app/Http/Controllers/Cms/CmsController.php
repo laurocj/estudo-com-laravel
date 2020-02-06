@@ -35,56 +35,40 @@ class CmsController extends BaseController
 
     /**
      * Contruct
-     * @param string $modalPermission name of model
+     * @param string $modelPermission name of model
      */
-    function __construct($modalPermission)
+    function __construct($modelPermission)
     {
         $this->middleware('auth');
-        $this->middleware("permission:$modalPermission-list|$modalPermission-create|$modalPermission-edit|$modalPermission-delet", ['only' => ['index','store']]);
-        $this->middleware("permission:$modalPermission-create", ['only' => ['create','store']]);
-        $this->middleware("permission:$modalPermission-edit", ['only' => ['edit','update']]);
-        $this->middleware("permission:$modalPermission-delete", ['only' => ['destroy']]);
+        $this->middleware("permission:$modelPermission-list|$modelPermission-create|$modelPermission-edit|$modelPermission-delet", ['only' => ['index','store']]);
+        $this->middleware("permission:$modelPermission-create", ['only' => ['create','store']]);
+        $this->middleware("permission:$modelPermission-edit", ['only' => ['edit','update']]);
+        $this->middleware("permission:$modelPermission-delete", ['only' => ['destroy']]);
     }
 
     /**
      * Return view
-     * 
+     *
      * @param string $name name of view
      * @param array $data array data returned
-     * 
+     *
      * @return \Illuminate\Http\Response
      */
-    protected function showView($name,$data = [])
+    protected function showView($name ,$data = [])
     {
-        $data['layout'] = $this->_layout;
+        $this->setLayout($data);
 
         return view($this->_path.$name,$data);
     }
 
     /**
-     * Return view with paginate
-     * 
-     * @param string $name name of view
-     * @param array $data array data returned
-     * 
-     * @return \Illuminate\Http\Response
-     */
-    protected function showViewPaginate(Request $request,$name,$data = [])
-    {
-        return $this->showView($name,$data)
-        ->with('i', ($request->input('page', 1) - 1) * $this->_itensPerPages);
-    }
-
-    
-
-    /**
      * Redirect with ok status
      * @param string $msg
-     * 
+     *
      * @return \Illuminate\Http\Response
      */
      protected function returnIndexStatusOk($msg)
-     {         
+     {
         return redirect()
             ->action($this->_actionIndex)
             ->with($this->_varStatusOk,$msg);
@@ -93,13 +77,25 @@ class CmsController extends BaseController
      /**
      * Redirect with status not ok
      * @param string $msg
-     * 
+     *
      * @return \Illuminate\Http\Response
      */
      protected function returnIndexStatusNotOk($msg)
-     {         
+     {
         return redirect()
             ->action($this->_actionIndex)
             ->with($this->_varStatusNok,$msg);
      }
+
+     /**
+     * Set layout
+     *
+     * @param array $data array data returned
+     *
+     * @return void
+     */
+    private function setLayout(&$data = [])
+    {
+        $data['layout'] = $this->_layout;
+    }
 }

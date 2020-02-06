@@ -37,7 +37,7 @@ class ProductsController extends CmsController
     public function index(Request $request)
     {
         $products = Product::paginate($this->_itensPerPages);
-        return $this->showViewPaginate($request, __FUNCTION__ , compact('products'));
+        return $this->showView( __FUNCTION__ , compact('products'));
     }
 
     /**

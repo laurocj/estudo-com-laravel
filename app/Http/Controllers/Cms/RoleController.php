@@ -41,7 +41,7 @@ class RoleController extends CmsController
     public function index(Request $request)
     {
         $roles = Role::orderBy('id','DESC')->paginate($this->_itensPerPages);
-        return $this->showViewPaginate($request, __FUNCTION__,compact('roles'));
+        return $this->showView( __FUNCTION__,compact('roles'));
     }
 
 
