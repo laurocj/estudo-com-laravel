@@ -7,7 +7,7 @@ use App\Http\Requests\CategoriesFormRequest;
 
 use Illuminate\Http\Request;
 
-use App\Model\Category;
+use App\Services\CategoryService;
 
 class CategoriesController extends CmsController
 {
@@ -35,9 +35,10 @@ class CategoriesController extends CmsController
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index(Request $request, CategoryService $categoryService)
     {
-        $categories = Category::paginate($this->_itensPerPages);
+        $categories = $categoryService->getPagedItems($this->_itensPerPages);
+
         return $this->showView( __FUNCTION__ , compact('categories'));
     }
 
@@ -57,13 +58,15 @@ class CategoriesController extends CmsController
      * @param  App\Http\Requests\CategoriesFormRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(CategoriesFormRequest $request)
+    public function store(CategoriesFormRequest $request, CategoryService $categoryService)
     {
-        Category::create([
-            'name' => $request->name
-        ]);
+        $category = $categoryService->create($request->name);
 
-        return $this->returnIndexStatusOk('Created');
+        if(empty($category)){
+            return $this->returnIndexStatusNotOk(__('Error creating'));
+        }
+
+        return $this->returnIndexStatusOk($category->name .' created');
     }
 
     /**
@@ -83,14 +86,13 @@ class CategoriesController extends CmsController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit($id, CategoryService $categoryService)
     {
-        $category = Category::find($id);
+        $category = $categoryService->find($id);
 
         if(empty($category)) {
             return $this->returnIndexStatusNotOk(__('Not found!!'));
         }
-
 
         return $this->showView( __FUNCTION__ , compact('category'));
     }
@@ -102,17 +104,18 @@ class CategoriesController extends CmsController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(CategoriesFormRequest $request, $id)
+    public function update(CategoriesFormRequest $request, $id, CategoryService $categoryService)
     {
-        $category = Category::find($id);
+        $category = $categoryService->find($id);
 
         if(empty($category)) {
             return $this->returnIndexStatusNotOk(__('Not found!!'));
         }
 
-        $category->name = $request->input('name');
-
-        $category->save();
+        $categoryService->update(
+            $category,
+            ['name' => $request->input('name')]
+        );
 
         return $this->returnIndexStatusOk('Updated');
     }
@@ -123,13 +126,15 @@ class CategoriesController extends CmsController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($id, CategoryService $categoryService)
     {
-        $category = Category::find($id);
+        $category = $categoryService->find($id);
 
-        if(!empty($category)){
-            $category->delete();
+        if(empty($category)) {
+            return $this->returnIndexStatusNotOk(__('Not found!!'));
         }
+
+        $categoryService->delete($category);
 
         return $this->returnIndexStatusOk('Deleted');
     }

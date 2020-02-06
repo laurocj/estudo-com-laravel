@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use Spatie\Permission\Models\Role;
-use DB;
+use Illuminate\Support\Facades\DB;
 
 class RolesService {
 
