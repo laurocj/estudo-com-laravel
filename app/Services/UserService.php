@@ -3,32 +3,13 @@
 namespace App\Services;
 
 use App\User;
-use App\Services\PaginatedAbstract;
+use App\Services\GenericDAO;
 use Illuminate\Support\Facades\Hash;
 
-class UserService extends PaginatedAbstract {
+class UserService extends GenericDAO {
 
-    /**
-     *  Get paged items
-     *
-     * @param int $perPage
-     *
-     * @return \Illuminate\Pagination\LengthAwarePaginator
-     */
-    public function getPagedItems(int $perPage)
-    {
-        return $this->paginate(new User, $perPage);
-    }
-
-    /**
-     *  Get item by id
-     *
-     * @param int $id
-     *
-     * @return User
-     */
-    public function find($id) {
-        return User::find($id);
+    public function __construct() {
+        parent::__construct(User::class);
     }
 
     /**
@@ -42,9 +23,9 @@ class UserService extends PaginatedAbstract {
      */
     public function create(String $name, String $email, String $password, Array $roles = [])
     {
-        $password = Hash::make($password);
+        $password = $this->encrypt($password);
 
-        $user = User::create([
+        $user = parent::createWith([
             'name' => $name,
             'email' => $email,
             'password' => $password
@@ -67,11 +48,12 @@ class UserService extends PaginatedAbstract {
      */
     public function update(User $user, Array $newValue, Array $roles = [])
     {
+        $attributes  = [];
         foreach($newValue as $column => $value) {
             if($column == 'password') {
-                $user->$column = Hash::make($value);
+                $attributes[$column] = $this->encrypt($value);
             } else {
-                $user->$column = $value;
+                $attributes[$column] = $value;
             }
         }
 
@@ -79,19 +61,16 @@ class UserService extends PaginatedAbstract {
             $user->assignRole($roles);
         }
 
-        return $user->update();
+        return parent::updateIn($user,$attributes);
     }
 
     /**
-     * Delete the User from the database.
+     * @param String $user
      *
-     * @param User $user
-     * @return bool|null
-     *
-     * @throws \Exception
+     * @return String
      */
-    public function delete(User $user)
+    private function encrypt(String $password)
     {
-        return $user->delete();
+        return Hash::make($password);
     }
 }

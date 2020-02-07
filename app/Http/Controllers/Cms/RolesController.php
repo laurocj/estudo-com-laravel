@@ -10,6 +10,7 @@ use Spatie\Permission\Models\Permission;
 
 use App\Http\Controllers\Cms\CmsController;
 use App\Http\Requests\RolesFormRequest;
+use App\Services\PermissionService;
 use App\Services\RoleService;
 
 class RolesController extends CmsController
@@ -31,6 +32,8 @@ class RolesController extends CmsController
      */
     private $service;
 
+
+
     /**
      * Construct
      */
@@ -40,7 +43,6 @@ class RolesController extends CmsController
         $this->service = $service;
     }
 
-
     /**
      * Display a listing of the resource.
      *
@@ -48,22 +50,20 @@ class RolesController extends CmsController
      */
     public function index(Request $request)
     {
-        $roles = $this->service->getPagedItems($this->_itensPerPages);
+        $roles = $this->service->paginate($this->_itensPerPages);
         return $this->showView( __FUNCTION__,compact('roles'));
     }
-
 
     /**
      * Show the form for creating a new resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(PermissionService $permissionService)
     {
-        $permissions = Permission::get();
+        $permissions = $permissionService->list('name');
         return $this->showView(__FUNCTION__,compact('permissions'));
     }
-
 
     /**
      * Store a newly created resource in storage.
@@ -78,8 +78,9 @@ class RolesController extends CmsController
             $request->input('permissions')
         );
 
-        return $this->returnIndexStatusOk('Role created successfully');
+        return $this->returnIndexStatusOk('Role ' . $role->name . ' created successfully');
     }
+
     /**
      * Display the specified resource.
      *
@@ -95,14 +96,13 @@ class RolesController extends CmsController
         return $this->showView( __FUNCTION__ ,compact('role','rolePermissions'));
     }
 
-
     /**
      * Show the form for editing the specified resource.
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit($id, PermissionService $permissionService)
     {
         $role = $this->service->find($id);
 
@@ -110,12 +110,12 @@ class RolesController extends CmsController
             return $this->returnIndexStatusNotOk(__('Not found!!'));
         }
 
-        $permissions = Permission::get();
+        $permissions = $permissionService->list('name');
+
         $rolePermissions = $role->permissions->pluck('id','id')->toArray();
 
         return $this->showView(__FUNCTION__,compact('role','permissions','rolePermissions'));
     }
-
 
     /**
      * Update the specified resource in storage.
@@ -138,8 +138,9 @@ class RolesController extends CmsController
             $request->input('permissions')
         );
 
-        return $this->returnIndexStatusOk('Role updated successfully');
+        return $this->returnIndexStatusOk('Role ' . $role->name . ' updated successfully');
     }
+
     /**
      * Remove the specified resource from storage.
      *

@@ -2,21 +2,21 @@
 
 namespace App\Services;
 
-use App\Model\Category;
 use App\Services\GenericDAO;
+use Spatie\Permission\Models\Permission;
 
-class CategoryService extends GenericDAO {
+class PermissionService extends GenericDAO {
 
     public function __construct() {
-        parent::__construct(Category::class);
+        parent::__construct(Permission::class);
     }
 
     /**
-     * Create Category
+     * Create Permission
      *
      * @param String $name
      *
-     * @return Category
+     * @return Permission
      */
     public function create(String $name)
     {
@@ -26,20 +26,20 @@ class CategoryService extends GenericDAO {
     }
 
     /**
-     * Update Category
+     * Update Permission
      *
-     * @param Category $category
+     * @param Permission $permission
      * @param Array $newValue
      *
      * @return boolean
      */
-    public function update(Category $category, Array $newValue)
+    public function update(Permission $permission, Array $newValue)
     {
         $attribules = [];
         foreach($newValue as $column => $value){
             $attribules[$column] = $value;
         }
 
-        return parent::updateIn($category,$attribules);
+        return parent::updateIn($permission,$attribules);
     }
 }

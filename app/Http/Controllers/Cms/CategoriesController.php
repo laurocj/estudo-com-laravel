@@ -29,6 +29,8 @@ class CategoriesController extends CmsController
      */
     private $service;
 
+
+
     /**
      * Construct
      */
@@ -45,7 +47,7 @@ class CategoriesController extends CmsController
      */
     public function index(Request $request)
     {
-        $categories = $this->service->getPagedItems($this->_itensPerPages);
+        $categories = $this->service->paginate($this->_itensPerPages);
 
         return $this->showView( __FUNCTION__ , compact('categories'));
     }

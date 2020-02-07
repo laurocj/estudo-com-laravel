@@ -6,6 +6,7 @@ use App\Http\Controllers\Cms\CmsController;
 use App\Http\Requests\ProductsFormRequest;
 use Illuminate\Http\Request;
 use App\Model\Category;
+use App\Services\CategoryService;
 use App\Services\ProductService;
 
 class ProductsController extends CmsController
@@ -44,7 +45,7 @@ class ProductsController extends CmsController
      */
     public function index(Request $request)
     {
-        $products = $this->service->getPagedItems($this->_itensPerPages);
+        $products = $this->service->paginate($this->_itensPerPages);
         return $this->showView( __FUNCTION__ , compact('products'));
     }
 
@@ -53,9 +54,9 @@ class ProductsController extends CmsController
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(CategoryService $categoryService)
     {
-        $categories = Category::all()->pluck('name','id');
+        $categories = $categoryService->list('name');
         return $this->showView( __FUNCTION__ , compact('categories'));
     }
 
@@ -94,7 +95,7 @@ class ProductsController extends CmsController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit($id, CategoryService $categoryService)
     {
         $product = $this->service->find($id);
 
@@ -102,7 +103,7 @@ class ProductsController extends CmsController
             return $this->returnIndexStatusNotOk(__('Not found!!'));
         }
 
-        $categories = Category::all()->pluck('name','id');
+        $categories = $categoryService->list('name');
 
         return $this->showView( __FUNCTION__ , compact('product','categories'));
     }

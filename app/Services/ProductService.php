@@ -3,31 +3,12 @@
 namespace App\Services;
 
 use App\Model\Product;
-use App\Services\PaginatedAbstract;
+use App\Services\GenericDAO;
 
-class ProductService extends PaginatedAbstract {
+class ProductService extends GenericDAO {
 
-    /**
-     *  Get paged items
-     *
-     * @param int $perPage
-     *
-     * @return \Illuminate\Pagination\LengthAwarePaginator
-     */
-    public function getPagedItems(int $perPage)
-    {
-        return $this->paginate(new Product, $perPage);
-    }
-
-    /**
-     *  Get item by id
-     *
-     * @param int $id
-     *
-     * @return Product
-     */
-    public function find($id) {
-        return Product::find($id);
+    public function __construct() {
+        parent::__construct(Product::class);
     }
 
     /**
@@ -42,7 +23,7 @@ class ProductService extends PaginatedAbstract {
      */
     public function create(String $name,String $stock,String $price,String $categoryId)
     {
-        return Product::create([
+        return parent::createWith([
             'name' => $name,
             'stock' => $stock,
             'price' => $price,
@@ -60,23 +41,12 @@ class ProductService extends PaginatedAbstract {
      */
     public function update(Product $product ,Array $newValue)
     {
+        $attributes  = [];
         foreach($newValue as $column => $value){
-            $product->$column = $value;
+            $attributes[$column] = $value;
         }
 
-        return $product->update();
+        return parent::updateIn($product, $attributes);
     }
 
-    /**
-     * Delete the Product from the database.
-     *
-     * @param Product $product
-     * @return bool|null
-     *
-     * @throws \Exception
-     */
-    public function delete(Product $product)
-    {
-        return $product->delete();
-    }
 }

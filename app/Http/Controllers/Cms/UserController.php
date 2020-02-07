@@ -34,6 +34,8 @@ class UserController extends CmsController
      */
     private $service;
 
+
+
     /**
      * Construct
      */
@@ -50,11 +52,10 @@ class UserController extends CmsController
      */
     public function index(Request $request)
     {
-        $users = $this->service->getPagedItems($this->_itensPerPages);
+        $users = $this->service->paginate($this->_itensPerPages);
         return $this->showView( __FUNCTION__ ,compact('users'));
 
     }
-
 
     /**
      * Show the form for creating a new resource.
@@ -66,7 +67,6 @@ class UserController extends CmsController
         $roles = $roleService->list('name');
         return $this->showView( __FUNCTION__ ,compact('roles'));
     }
-
 
     /**
      * Store a newly created resource in storage.
@@ -86,7 +86,6 @@ class UserController extends CmsController
         return $this->returnIndexStatusOk('User created successfully');
     }
 
-
     /**
      * Display the specified resource.
      *
@@ -98,7 +97,6 @@ class UserController extends CmsController
         $user = $this->service->find($id);
         return $this->showView( __FUNCTION__ ,compact('user'));
     }
-
 
     /**
      * Show the form for editing the specified resource.
@@ -120,7 +118,6 @@ class UserController extends CmsController
 
         return $this->showView( __FUNCTION__ ,compact('user','roles','userRole'));
     }
-
 
     /**
      * Update the specified resource in storage.
@@ -145,7 +142,6 @@ class UserController extends CmsController
 
         return $this->returnIndexStatusOk('User updated successfully');
     }
-
 
     /**
      * Remove the specified resource from storage.

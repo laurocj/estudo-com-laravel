@@ -18,6 +18,8 @@ class DashboardController extends CmsController
      */
     protected $_actionIndex = 'Cms\DashboardController@index';
 
+
+
     /**
      * Construct
      */
@@ -31,7 +33,7 @@ class DashboardController extends CmsController
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index()
     {
         return $this->showView( __FUNCTION__ );
     }

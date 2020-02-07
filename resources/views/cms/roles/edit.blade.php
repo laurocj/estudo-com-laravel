@@ -29,9 +29,9 @@
                 $namePermission = '';
             @endphp
 
-            @foreach($permissions as $key => $permission)
+            @foreach($permissions as $id => $name)
                 @php
-                    $arrNamePermission = explode('-',$permission->name);
+                    $arrNamePermission = explode('-',$name);
 
                     if($arrNamePermission[0] !== $namePermission){
                         $namePermission = $arrNamePermission[0];
@@ -41,7 +41,7 @@
 
                 <div class="form-check">
                     <label class='form-check-label'>
-                        {!! Form::checkbox('permissions[]', $permission->id, $rolePermissions, array('class'=> classValidOrInvalidForCheck('permissons',$errors))) !!}
+                        {!! Form::checkbox('permissions[]', $id, $rolePermissions, array('class'=> classValidOrInvalidForCheck('permissons',$errors))) !!}
                         {{ $arrNamePermission[1] }}
                     </label>
                 </div>
