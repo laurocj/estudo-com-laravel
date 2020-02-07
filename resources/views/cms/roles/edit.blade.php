@@ -25,18 +25,31 @@
         <div class="form-group">
             <strong>Permission:</strong>
 
-            @foreach($permission as $value)
+            @php
+                $namePermission = '';
+            @endphp
+
+            @foreach($permissions as $key => $permission)
+                @php
+                    $arrNamePermission = explode('-',$permission->name);
+
+                    if($arrNamePermission[0] !== $namePermission){
+                        $namePermission = $arrNamePermission[0];
+                        echo '<br>'.$arrNamePermission[0];
+                    }
+                @endphp
+
                 <div class="form-check">
                     <label class='form-check-label'>
-                        {!! Form::checkbox('permission[]', $value->id, false, array('class'=> classValidOrInvalidForCheck('permisson',$errors))) !!}
-                    {{ $value->name }}
+                        {!! Form::checkbox('permissions[]', $permission->id, $rolePermissions, array('class'=> classValidOrInvalidForCheck('permissons',$errors))) !!}
+                        {{ $arrNamePermission[1] }}
                     </label>
                 </div>
             @endforeach
 
             <div class="invalid-feedback">
-                @if($errors->has('permission'))
-                    @foreach($errors->get('permission') as $msg)
+                @if($errors->has('permissions'))
+                    @foreach($errors->get('permissions') as $msg)
                     {{$msg}}<br/>
                     @endforeach
                 @endif

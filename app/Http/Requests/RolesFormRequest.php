@@ -25,7 +25,7 @@ class RolesFormRequest extends FormRequest
     {
         return [
             'name' => 'required',
-            'permission' => 'required',
+            'permissions' => 'required',
         ];
     }
 }

@@ -22,11 +22,19 @@ class ProductsController extends CmsController
     protected $_actionIndex = 'Cms\ProductsController@index';
 
     /**
+     * Service
+     *
+     * @var \App\Services\ProductService $service
+     */
+    private $service;
+
+    /**
      * Construct
      */
-    function __construct()
+    function __construct(ProductService $service)
     {
         parent::__construct('product');
+        $this->service = $service;
     }
 
     /**
@@ -34,9 +42,9 @@ class ProductsController extends CmsController
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request, ProductService $productService)
+    public function index(Request $request)
     {
-        $products = $productService->getPagedItems($this->_itensPerPages);
+        $products = $this->service->getPagedItems($this->_itensPerPages);
         return $this->showView( __FUNCTION__ , compact('products'));
     }
 
@@ -57,13 +65,13 @@ class ProductsController extends CmsController
      * @param  App\Http\Requests\ProductsFormRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(ProductsFormRequest $request, ProductService $productService)
+    public function store(ProductsFormRequest $request)
     {
-        $product = $productService->create(
+        $product = $this->service->create(
             $request->name,
             $request->stock,
             $request->price,
-            $request->category_id,
+            $request->category_id
         );
 
         return $this->returnIndexStatusOk($product->name.' created');
@@ -86,9 +94,9 @@ class ProductsController extends CmsController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id, ProductService $productService)
+    public function edit($id)
     {
-        $product = $productService->find($id);
+        $product = $this->service->find($id);
 
         if(empty($product)) {
             return $this->returnIndexStatusNotOk(__('Not found!!'));
@@ -106,15 +114,18 @@ class ProductsController extends CmsController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(ProductsFormRequest $request, $id, ProductService $productService)
+    public function update(ProductsFormRequest $request, $id)
     {
-        $product = $productService->find($id);
+        $product = $this->service->find($id);
 
         if(empty($product)) {
             return $this->returnIndexStatusNotOk(__('Not found!!'));
         }
 
-        $product->update($request->all());
+        $this->service->update(
+            $product,
+            $request->only(['name','stock','price','category_id'])
+        );
 
         return $this->returnIndexStatusOk('Updated');
     }
@@ -125,15 +136,15 @@ class ProductsController extends CmsController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id, ProductService $productService)
+    public function destroy($id)
     {
-        $product = $productService->find($id);
+        $product = $this->service->find($id);
 
         if(empty($product)) {
             return $this->returnIndexStatusNotOk(__('Not found!!'));
-        } else {
-            $productService->delete($product);
         }
+
+        $this->service->delete($product);
 
         return $this->returnIndexStatusOk('Deleted');
     }

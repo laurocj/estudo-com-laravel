@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Cms;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Cms\CmsController;
 use App\Http\Requests\UsersFormRequest;
+use App\Services\UserService;
 use App\User;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\DB;
@@ -26,11 +27,19 @@ class UserController extends CmsController
     protected $_actionIndex = 'Cms\UserController@index';
 
     /**
+     * Service
+     *
+     * @var \App\Services\UserService $service
+     */
+    private $service;
+
+    /**
      * Construct
      */
-    function __construct()
+    function __construct(UserService $service)
     {
         parent::__construct('user');
+        $this->service = $service;
     }
 
     /**
@@ -40,7 +49,7 @@ class UserController extends CmsController
      */
     public function index(Request $request)
     {
-        $users = User::paginate($this->_itensPerPages);
+        $users = $this->service->getPagedItems($this->_itensPerPages);
         return $this->showView( __FUNCTION__ ,compact('users'));
 
     }
@@ -66,11 +75,12 @@ class UserController extends CmsController
      */
     public function store(UsersFormRequest $request)
     {
-        $input = $request->all();
-        $input['password'] = Hash::make($input['password']);
-
-        $user = User::create($input);
-        $user->assignRole($request->input('roles'));
+        $user = $this->service->create(
+            $request->name,
+            $request->email,
+            $request->password,
+            $request->roles
+        );
 
         return $this->returnIndexStatusOk('User created successfully');
     }
@@ -84,7 +94,7 @@ class UserController extends CmsController
      */
     public function show($id)
     {
-        $user = User::find($id);
+        $user = $this->service->find($id);
         return $this->showView( __FUNCTION__ ,compact('user'));
     }
 
@@ -97,7 +107,7 @@ class UserController extends CmsController
      */
     public function edit($id)
     {
-        $user = User::find($id);
+        $user = $this->service->find($id);
 
         if(empty($user)) {
             return $this->returnIndexStatusNotOk(__('Not found!!'));
@@ -105,7 +115,6 @@ class UserController extends CmsController
 
         $roles = Role::pluck('name','name')->all();
         $userRole = $user->roles->pluck('name','name')->all();
-
 
         return $this->showView( __FUNCTION__ ,compact('user','roles','userRole'));
     }
@@ -120,23 +129,17 @@ class UserController extends CmsController
      */
     public function update(UsersFormRequest $request, $id)
     {
-        $user = User::find($id);
+        $user = $this->service->find($id);
 
         if(empty($user)) {
             return $this->returnIndexStatusNotOk(__('Not found!!'));
         }
 
-        $input = $request->all();
-        if(!empty($input['password'])){
-            $input['password'] = Hash::make($input['password']);
-        }else{
-            $input = array_except($input,['password']);
-        }
-
-        $user->update($input);
-        DB::table('model_has_roles')->where('model_id',$id)->delete();
-
-        $user->assignRole($request->input('roles'));
+        $this->service->update(
+            $user,
+            $request->only(['name','email','password']),
+            $request->input('roles')
+        );
 
         return $this->returnIndexStatusOk('User updated successfully');
     }
@@ -150,13 +153,13 @@ class UserController extends CmsController
      */
     public function destroy($id)
     {
-        $user = User::find($id);
+        $user = $this->service->find($id);
 
         if(empty($user)){
             return $this->returnIndexStatusNotOk(__('Not found!'));
-        } else {
-            $user->delete();
         }
+
+        $this->service->delete($user);
 
         return $this->returnIndexStatusOk('User deleted successfully');
     }

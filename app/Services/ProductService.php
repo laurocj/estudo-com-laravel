@@ -64,7 +64,7 @@ class ProductService extends PaginatedAbstract {
             $product->$column = $value;
         }
 
-        return $product->save();
+        return $product->update();
     }
 
     /**

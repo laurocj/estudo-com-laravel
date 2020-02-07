@@ -10,9 +10,9 @@ use Spatie\Permission\Models\Permission;
 
 use App\Http\Controllers\Cms\CmsController;
 use App\Http\Requests\RolesFormRequest;
-use App\Services\RolesService;
+use App\Services\RoleService;
 
-class RoleController extends CmsController
+class RolesController extends CmsController
 {
     /**
      * Path to views
@@ -22,14 +22,22 @@ class RoleController extends CmsController
     /**
      * Action Index in controller
      */
-    protected $_actionIndex = 'Cms\RoleController@index';
+    protected $_actionIndex = 'Cms\RolesController@index';
+
+    /**
+     * Service
+     *
+     * @var \App\Services\RoleService $service
+     */
+    private $service;
 
     /**
      * Construct
      */
-    function __construct()
+    function __construct(RoleService $service)
     {
         parent::__construct('role');
+        $this->service = $service;
     }
 
 
@@ -52,8 +60,8 @@ class RoleController extends CmsController
      */
     public function create()
     {
-        $permission = Permission::get();
-        return $this->showView(__FUNCTION__,compact('permission'));
+        $permissions = Permission::get();
+        return $this->showView(__FUNCTION__,compact('permissions'));
     }
 
 
@@ -63,11 +71,11 @@ class RoleController extends CmsController
      * @param  App\Http\Requests\RolesFormRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(RolesFormRequest $request,RolesService $rolesService)
+    public function store(RolesFormRequest $request)
     {
-        $role = $rolesService->createRoles(
+        $role = $this->service->create(
             $request->input('name'),
-            $request->input('permission')
+            $request->input('permissions')
         );
 
         return $this->returnIndexStatusOk('Role created successfully');
@@ -80,7 +88,8 @@ class RoleController extends CmsController
      */
     public function show($id)
     {
-        $role = Role::find($id);
+        $role = $this->service->find($id);
+
         $rolePermissions = Permission::join("role_has_permissions","role_has_permissions.permission_id","=","permissions.id")
             ->where("role_has_permissions.role_id",$id)
             ->get();
@@ -98,20 +107,20 @@ class RoleController extends CmsController
      */
     public function edit($id)
     {
-        $role = Role::find($id);
+        $role = $this->service->find($id);
 
         if(empty($role)) {
             return $this->returnIndexStatusNotOk(__('Not found!!'));
         }
 
-        $permission = Permission::get();
+        $permissions = Permission::get();
         $rolePermissions = DB::table("role_has_permissions")
                                 ->where("role_has_permissions.role_id",$id)
                                 ->pluck('role_has_permissions.permission_id','role_has_permissions.permission_id')
                                 ->all();
 
 
-        return $this->showView(__FUNCTION__,compact('role','permission','rolePermissions'));
+        return $this->showView(__FUNCTION__,compact('role','permissions','rolePermissions'));
     }
 
 
@@ -124,16 +133,17 @@ class RoleController extends CmsController
      */
     public function update(RolesFormRequest $request, $id)
     {
-        $role = Role::find($id);
+        $role = $this->service->find($id);
 
         if(empty($role)) {
             return $this->returnIndexStatusNotOk(__('Not found!!'));
         }
 
-        $role->name = $request->input('name');
-        $role->save();
-
-        $role->syncPermissions($request->input('permission'));
+        $this->service->update(
+            $role,
+            ['name' => $request->input('name')],
+            $request->input('permissions')
+        );
 
         return $this->returnIndexStatusOk('Role updated successfully');
     }
@@ -145,13 +155,13 @@ class RoleController extends CmsController
      */
     public function destroy($id)
     {
-        $role = Role::find($id);
+        $role = $this->service->find($id);
 
         if(empty($role)) {
             return $this->returnIndexStatusNotOk(__('Not found!!'));
-        } else {
-            $role->delete();
         }
+
+        $this->service->delete($role);
 
         return $this->returnIndexStatusOk('Role deleted successfully');
     }

@@ -11,7 +11,7 @@ abstract class PaginatedAbstract
 
     /**
      *  Get paged items
-     *
+     * @param Illuminate\Database\Eloquent\Model $model
      * @param int $perPage
      *
      * @return \Illuminate\Pagination\LengthAwarePaginator

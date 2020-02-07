@@ -52,13 +52,13 @@ class CategoryService extends PaginatedAbstract {
      *
      * @return boolean
      */
-    public function update(Category $category ,Array $newValue)
+    public function update(Category $category, Array $newValue)
     {
         foreach($newValue as $column => $value){
             $category->$column = $value;
         }
 
-        return $category->save();
+        return $category->update();
     }
 
     /**
