@@ -2,8 +2,6 @@
 
 namespace App\Services;
 
-
-
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\DB;
 use App\Services\PaginatedAbstract;
@@ -20,6 +18,20 @@ class RoleService extends PaginatedAbstract {
     public function getPagedItems(int $perPage)
     {
         return $this->paginate(new Role, $perPage);
+    }
+
+    /**
+     *  List
+     *
+     * @param  string  $value
+     * @param  string|null  $key
+     * @return array
+     *
+     * @return \Illuminate\Pagination\LengthAwarePaginator
+     */
+    public function list(String $value, $key = 'id')
+    {
+        return Role::pluck($value, $key)->all();
     }
 
     /**

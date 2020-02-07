@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Cms;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Cms\CmsController;
 use App\Http\Requests\UsersFormRequest;
+use App\Services\RoleService;
 use App\Services\UserService;
 use App\User;
 use Spatie\Permission\Models\Role;
@@ -60,9 +61,9 @@ class UserController extends CmsController
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(RoleService $roleService)
     {
-        $roles = Role::pluck('name','name')->all();
+        $roles = $roleService->list('name');
         return $this->showView( __FUNCTION__ ,compact('roles'));
     }
 
@@ -105,7 +106,7 @@ class UserController extends CmsController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit($id,RoleService $roleService)
     {
         $user = $this->service->find($id);
 
@@ -113,7 +114,8 @@ class UserController extends CmsController
             return $this->returnIndexStatusNotOk(__('Not found!!'));
         }
 
-        $roles = Role::pluck('name','name')->all();
+        $roles = $roleService->list('name','name');
+
         $userRole = $user->roles->pluck('name','name')->all();
 
         return $this->showView( __FUNCTION__ ,compact('user','roles','userRole'));

@@ -52,6 +52,7 @@ class UsersTest extends TestCase
         );
 
         $this->assertTrue($updated);
+
         $this->assertEquals(User::find($user->id)->name,$newName);
 
         $user->delete();

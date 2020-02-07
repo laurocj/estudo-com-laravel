@@ -48,7 +48,7 @@ class RolesController extends CmsController
      */
     public function index(Request $request)
     {
-        $roles = Role::orderBy('id','DESC')->paginate($this->_itensPerPages);
+        $roles = $this->service->getPagedItems($this->_itensPerPages);
         return $this->showView( __FUNCTION__,compact('roles'));
     }
 
@@ -90,10 +90,7 @@ class RolesController extends CmsController
     {
         $role = $this->service->find($id);
 
-        $rolePermissions = Permission::join("role_has_permissions","role_has_permissions.permission_id","=","permissions.id")
-            ->where("role_has_permissions.role_id",$id)
-            ->get();
-
+        $rolePermissions = $role->permissions;
 
         return $this->showView( __FUNCTION__ ,compact('role','rolePermissions'));
     }
@@ -114,11 +111,7 @@ class RolesController extends CmsController
         }
 
         $permissions = Permission::get();
-        $rolePermissions = DB::table("role_has_permissions")
-                                ->where("role_has_permissions.role_id",$id)
-                                ->pluck('role_has_permissions.permission_id','role_has_permissions.permission_id')
-                                ->all();
-
+        $rolePermissions = $role->permissions->pluck('id','id')->toArray();
 
         return $this->showView(__FUNCTION__,compact('role','permissions','rolePermissions'));
     }

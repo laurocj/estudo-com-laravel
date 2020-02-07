@@ -18,6 +18,6 @@ abstract class PaginatedAbstract
      */
     public function paginate(Model $model, int $perPage) {
 
-        return $model::paginate($perPage);
+        return $model::orderBy('id','DESC')->paginate($perPage);
     }
 }
