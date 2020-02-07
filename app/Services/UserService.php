@@ -65,7 +65,7 @@ class UserService extends PaginatedAbstract {
      *
      * @return boolean
      */
-    public function update(User $user, Array $newValue, Array $roles)
+    public function update(User $user, Array $newValue, Array $roles = [])
     {
         foreach($newValue as $column => $value) {
             if($column == 'password') {
