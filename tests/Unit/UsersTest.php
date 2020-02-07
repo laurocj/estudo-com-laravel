@@ -8,6 +8,7 @@ use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Role;
 
 class UsersTest extends TestCase
 {
@@ -35,6 +36,18 @@ class UsersTest extends TestCase
         $this->assertTrue(Hash::check($password, $user->password));
 
         return $user;
+    }
+
+    /**
+     * @depends testCreateUser
+     */
+    public function testAddRoles(User $user)
+    {
+        $role = Role::findByName('Admin');
+
+        $user->assignRole([$role->id]);
+
+        $this->assertTrue($user::find($user->id)->hasRole($role->name));
     }
 
     /**

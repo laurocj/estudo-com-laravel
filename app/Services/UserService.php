@@ -58,7 +58,7 @@ class UserService extends GenericDAO {
         }
 
         if(!empty($roles)) {
-            $user->assignRole($roles);
+            $user->syncRoles($roles);
         }
 
         return parent::updateIn($user,$attributes);
