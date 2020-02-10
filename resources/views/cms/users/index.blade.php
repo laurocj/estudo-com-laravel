@@ -11,7 +11,7 @@
             <h1 class="h2">{{__('Users Management')}}</h1>
 
             @can('user-create')
-                <a href="{{ route('users.create') }}" class="btn btn-outline-success">{{__('New')}}</a>
+                <a href="{{ route('usuarios.create') }}" class="btn btn-outline-success">{{__('New')}}</a>
             @endcan
         </div>
 
@@ -39,9 +39,9 @@
                     @endif
                     </td>
                     <td>
-                    <a class="btn btn-sm btn-info" href="{{ route('users.show',$user->id) }}">Show</a>
-                    <a class="btn btn-sm btn-primary" href="{{ route('users.edit',$user->id) }}">Edit</a>
-                        {!! Form::open(['method' => 'DELETE','route' => ['users.destroy', $user->id],'style'=>'display:inline']) !!}
+                    <a class="btn btn-sm btn-info" href="{{ route('usuarios.show',$user->id) }}">Show</a>
+                    <a class="btn btn-sm btn-primary" href="{{ route('usuarios.edit',$user->id) }}">Edit</a>
+                        {!! Form::open(['method' => 'DELETE','route' => ['usuarios.destroy', $user->id],'style'=>'display:inline']) !!}
                         {!! Form::submit('Delete', ['class' => 'btn btn-sm btn-danger']) !!}
                         {!! Form::close() !!}
                     </td>

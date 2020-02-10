@@ -28,8 +28,8 @@
                 @endcan
 
                 <li class="nav-item">
-                    <a class="nav-link {{ Route::is('users.*') ? 'active' : '' }}"
-                        href="{{ route('users.index') }}">{{ __('Users') }}</a>
+                    <a class="nav-link {{ Route::is('usuarios.*') ? 'active' : '' }}"
+                        href="{{ route('usuarios.index') }}">{{ __('Users') }}</a>
                 </li>
 
             </ul> --}}

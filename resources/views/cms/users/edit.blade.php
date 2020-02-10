@@ -9,7 +9,7 @@
     </div>
 
     <div class="col-12 col-sm-9 mx-auto mt-4">
-        {!! Form::model($user, ['method' => 'PATCH','route' => ['users.update', $user->id]]) !!}
+        {!! Form::model($user, ['method' => 'PATCH','route' => ['usuarios.update', $user->id]]) !!}
         <div class="form-group">
             {!! Form::label('name', __('Name:')) !!}
             {!! Form::text('name', null, ['class'=> classValidOrInvalidForInput('name',$errors)]) !!}
@@ -46,7 +46,7 @@
         </div>
         <div class="form-group text-rigth">
             {!! Form::submit('Save', ['class'=>'btn btn-danger']) !!}
-            <a class="btn btn-primary" href="{{ route('users.index') }}"> Back</a>
+            <a class="btn btn-primary" href="{{ route('usuarios.index') }}"> Back</a>
         </div>
         {!! Form::close() !!}
     </div>

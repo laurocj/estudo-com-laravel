@@ -18,7 +18,7 @@ Route::get('/', 'HomeController@index')->name('home');
 Route::group(['prefix' => 'cms','middleware' => ['auth']], function () {
     Route::get('/', 'Cms\DashboardController@index');
     Route::resource('regras','Cms\RolesController');
-    Route::resource('users','Cms\UserController');
+    Route::resource('usuarios','Cms\UserController');
     Route::resource('produtos', 'Cms\ProductsController');
     Route::resource('categorias', 'Cms\CategoriesController');
 });

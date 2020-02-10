@@ -30,7 +30,7 @@ class RouteServiceProvider extends ServiceProvider
 
     /**
      * Traduz as funções para portuques
-     * 
+     *
      * @return void
      */
      protected function resourceVerbsPTBR()
