@@ -24,10 +24,25 @@ class ProductsFormRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required|unique:products|max:255',
+            'name' => 'required|max:255|unique:products,name,'.$this->getIdInUrl(),
             'stock' => 'required|numeric|min:0',
             'price' => 'required|numeric|min:0.01',
             'category_id' => 'required',
         ];
+    }
+
+    /**
+     * Retrieve the id in the url
+     *
+     * @return int
+     */
+    private function getIdInUrl() : int
+    {
+        foreach($this->segments() as $segment) {
+            if(is_numeric($segment)){
+                return $segment;
+            }
+        }
+        return 0;
     }
 }

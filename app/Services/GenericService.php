@@ -52,16 +52,6 @@ class GenericService
     }
 
     /**
-     * @param Array $attributes
-     *
-     * @return \Illuminate\Database\Eloquent\Model
-     */
-    public function createWith(Array $attributes) : Model
-    {
-        return $this->model::create($attributes);
-    }
-
-    /**
      * @param \Illuminate\Database\Eloquent\Model $model
      *
      * @return boolean
@@ -106,12 +96,22 @@ class GenericService
     }
 
     /**
+     * @param Array $attributes
+     *
+     * @return \Illuminate\Database\Eloquent\Model
+     */
+    protected function createWith(Array $attributes) : Model
+    {
+        return $this->model::create($attributes);
+    }
+
+    /**
      * @param \Illuminate\Database\Eloquent\Model $model
      * @param Array $attributes
      *
      * @return boolean
      */
-    public function updateIn(Model $model, Array $attributes) : bool
+    protected function updateIn(Model $model, Array $attributes) : bool
     {
         $this->checkModel($model);
 
