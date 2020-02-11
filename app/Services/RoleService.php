@@ -6,7 +6,7 @@ use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\DB;
 use App\Services\PaginatedAbstract;
 
-class RoleService  extends GenericDAO {
+class RoleService  extends GenericService {
 
     public function __construct() {
         parent::__construct(Role::class);

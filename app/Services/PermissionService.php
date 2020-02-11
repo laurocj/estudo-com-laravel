@@ -2,10 +2,10 @@
 
 namespace App\Services;
 
-use App\Services\GenericDAO;
+use App\Services\GenericService;
 use Spatie\Permission\Models\Permission;
 
-class PermissionService extends GenericDAO {
+class PermissionService extends GenericService {
 
     public function __construct() {
         parent::__construct(Permission::class);

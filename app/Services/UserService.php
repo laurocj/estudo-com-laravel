@@ -3,10 +3,10 @@
 namespace App\Services;
 
 use App\User;
-use App\Services\GenericDAO;
+use App\Services\GenericService;
 use Illuminate\Support\Facades\Hash;
 
-class UserService extends GenericDAO {
+class UserService extends GenericService {
 
     public function __construct() {
         parent::__construct(User::class);

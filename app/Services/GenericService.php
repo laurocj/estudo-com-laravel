@@ -5,7 +5,7 @@ namespace App\Services;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
-class GenericDAO
+class GenericService
 {
 
     /**
@@ -14,7 +14,7 @@ class GenericDAO
     private $model;
 
     /**
-     * GenericDAO constructor.
+     * GenericService constructor.
      *
      * @param string $model
      */

@@ -3,9 +3,9 @@
 namespace App\Services;
 
 use App\Model\Product;
-use App\Services\GenericDAO;
+use App\Services\GenericService;
 
-class ProductService extends GenericDAO {
+class ProductService extends GenericService {
 
     public function __construct() {
         parent::__construct(Product::class);
