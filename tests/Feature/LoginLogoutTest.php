@@ -68,7 +68,7 @@ class LoginLogoutTest extends TestCase
 
         $this->post('login',$credential);
 
-        $response = $this->get('/cms/users/1/editar');
+        $response = $this->get('/cms/usuarios/1/editar');
 
         $response->assertForbidden();
     }

@@ -48,8 +48,7 @@ class CategoriesController extends CmsController
     public function index(Request $request)
     {
         $categories = $this->service->paginate($this->_itensPerPages);
-//1teste
-//2teste
+
         return $this->showView( __FUNCTION__ , compact('categories'));
     }
 
