@@ -24,16 +24,16 @@ class UsersFormRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required',
-            'email' => 'required|email|unique:users,email,'.$this->getIdInUrl(),
-            'password' => 'confirmed|same:password_confirmation',
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email,'.$this->getIdInUrl(),
+            'password' => 'required|string|min:8|confirmed',
             'roles' => 'required'
         ];
     }
 
     /**
      * Retrieve the id in the url
-     * 
+     *
      * @return int
      */
     private function getIdInUrl() : int
