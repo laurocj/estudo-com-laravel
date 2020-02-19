@@ -1,31 +1,31 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
-    @include('cms.layouts.head')
+@include('cms.layouts.head')
 
-    <body>
+<body>
 
-        @include('cms.layouts.navbar')
+    @include('cms.layouts.navbar')
 
-        <div class="container-fluid h-100">
+    <div class="container-fluid h-100">
 
-            <div class="row h-100">
+        <div class="row h-100">
 
-                <nav class='d-none d-sm-block col-sm-4 col-md-3 col-xl-2 border bg-light'>
-                    @include('cms.layouts.menu')
-                </nav>
+            <nav class='d-none d-sm-block col-sm-4 col-md-3 col-xl-2 border bg-light'>
+                @include('cms.layouts.menu')
+            </nav>
 
-                <main class="col-12 col-sm">
-                    @yield('content')
-                </main>
-
-            </div>
+            <main class="col-12 col-sm">
+                @yield('content')
+            </main>
 
         </div>
 
-        @include('cms.layouts.js')
+    </div>
 
-    </body>
+    @include('cms.layouts.js')
+
+</body>
 
 
 </html>
