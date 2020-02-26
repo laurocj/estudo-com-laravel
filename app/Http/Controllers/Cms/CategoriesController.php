@@ -7,6 +7,7 @@ use App\Http\Requests\CategoriesFormRequest;
 
 use Illuminate\Http\Request;
 
+use App\Repository\CategoryRepository;
 use App\Services\CategoryService;
 
 class CategoriesController extends CmsController
@@ -23,21 +24,19 @@ class CategoriesController extends CmsController
     protected $_actionIndex = 'Cms\CategoriesController@index';
 
     /**
-     * Service
+     * Repository
      *
-     * @var \App\Services\CategoryService $service
+     * @var \App\Repository\CategoryRepository $repository
      */
-    private $service;
-
-
+    private $repository;
 
     /**
      * Construct
      */
-    function __construct(CategoryService $service)
+    function __construct(CategoryRepository $repository)
     {
         parent::__construct('category');
-        $this->service = $service;
+        $this->repository = $repository;
     }
 
     /**
@@ -47,9 +46,9 @@ class CategoriesController extends CmsController
      */
     public function index(Request $request)
     {
-        $categories = $this->service->paginate($this->_itensPerPages);
+        $categories = $this->repository->paginate($this->_itensPerPages);
 
-        return $this->showView( __FUNCTION__ , compact('categories'));
+        return $this->showView(__FUNCTION__, compact('categories'));
     }
 
     /**
@@ -59,24 +58,25 @@ class CategoriesController extends CmsController
      */
     public function create()
     {
-        return $this->showView( __FUNCTION__ );
+        return $this->showView(__FUNCTION__);
     }
 
     /**
      * Store a newly created resource in storage.
      *
      * @param  App\Http\Requests\CategoriesFormRequest  $request
+     * @param  App\Services\CategoryService $service
      * @return \Illuminate\Http\Response
      */
-    public function store(CategoriesFormRequest $request)
+    public function store(CategoriesFormRequest $request, CategoryService $service)
     {
-        $category = $this->service->create($request->name);
+        $category = $service->create($request->name);
 
-        if(empty($category)){
+        if (empty($category)) {
             return $this->returnIndexStatusNotOk(__('Error creating'));
         }
 
-        return $this->returnIndexStatusOk($category->name .' created');
+        return $this->returnIndexStatusOk($category->name . ' created');
     }
 
     /**
@@ -98,31 +98,32 @@ class CategoriesController extends CmsController
      */
     public function edit($id)
     {
-        $category = $this->service->find($id);
+        $category = $this->repository->find($id);
 
-        if(empty($category)) {
+        if (empty($category)) {
             return $this->returnIndexStatusNotOk(__('Not found!!'));
         }
 
-        return $this->showView( __FUNCTION__ , compact('category'));
+        return $this->showView(__FUNCTION__, compact('category'));
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  App\Http\Requests\CategoriesFormRequest  $request
+     * @param  App\Services\CategoryService $service
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(CategoriesFormRequest $request, $id)
+    public function update(CategoriesFormRequest $request, CategoryService $service, $id)
     {
-        $category = $this->service->find($id);
+        $category = $this->repository->find($id);
 
-        if(empty($category)) {
+        if (empty($category)) {
             return $this->returnIndexStatusNotOk(__('Not found!!'));
         }
 
-        $this->service->update(
+        $service->update(
             $category,
             ['name' => $request->input('name')]
         );
@@ -138,13 +139,13 @@ class CategoriesController extends CmsController
      */
     public function destroy($id)
     {
-        $category = $this->service->find($id);
+        $category = $this->repository->find($id);
 
-        if(empty($category)) {
+        if (empty($category)) {
             return $this->returnIndexStatusNotOk(__('Not found!!'));
         }
 
-        $this->service->delete($category);
+        $this->repository->delete($category);
 
         return $this->returnIndexStatusOk('Deleted');
     }

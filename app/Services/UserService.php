@@ -2,14 +2,30 @@
 
 namespace App\Services;
 
+use App\Repository\UserRepository;
 use App\User;
-use App\Services\GenericService;
+
 use Illuminate\Support\Facades\Hash;
 
-class UserService extends GenericService {
+class UserService
+{
 
-    public function __construct() {
-        parent::__construct(User::class);
+    /**
+     * User Repository
+     *
+     * @var UserRepository
+     */
+    private $userRepository;
+
+    /**
+     * User Repository
+     * @param UserRepository
+     *
+     * @return this
+     */
+    public function __construct(UserRepository $userRepository)
+    {
+        $this->userRepository = $userRepository;
     }
 
     /**
@@ -21,17 +37,17 @@ class UserService extends GenericService {
      *
      * @return User
      */
-    public function create(String $name, String $email, String $password, Array $roles = [])
+    public function create(String $name, String $email, String $password, array $roles = [])
     {
         $password = $this->encrypt($password);
 
-        $user = parent::createWith([
+        $user = $this->userRepository->create([
             'name' => $name,
             'email' => $email,
             'password' => $password
         ]);
 
-        if(!empty($roles)) {
+        if (!empty($roles)) {
             $user->assignRole($roles);
         }
 
@@ -46,22 +62,22 @@ class UserService extends GenericService {
      *
      * @return boolean
      */
-    public function update(User $user, Array $newValue, Array $roles = [])
+    public function update(User $user, array $newValue, array $roles = [])
     {
         $attributes  = [];
-        foreach($newValue as $column => $value) {
-            if($column == 'password') {
+        foreach ($newValue as $column => $value) {
+            if ($column == 'password') {
                 $attributes[$column] = $this->encrypt($value);
             } else {
                 $attributes[$column] = $value;
             }
         }
 
-        if(!empty($roles)) {
+        if (!empty($roles)) {
             $user->syncRoles($roles);
         }
 
-        return parent::updateIn($user,$attributes);
+        return $this->userRepository->update($user, $attributes);
     }
 
     /**

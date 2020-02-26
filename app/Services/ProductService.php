@@ -3,12 +3,27 @@
 namespace App\Services;
 
 use App\Model\Product;
-use App\Services\GenericService;
+use App\Repository\ProductRepository;
 
-class ProductService extends GenericService {
+class ProductService
+{
 
-    public function __construct() {
-        parent::__construct(Product::class);
+    /**
+     * Product Repository
+     *
+     * @var ProductRepository
+     */
+    private $productRepository;
+
+    /**
+     * Product Repository
+     * @param ProductRepository
+     *
+     * @return this
+     */
+    public function __construct(ProductRepository $productRepository)
+    {
+        $this->productRepository = $productRepository;
     }
 
     /**
@@ -21,9 +36,9 @@ class ProductService extends GenericService {
      *
      * @return Product
      */
-    public function create(String $name,String $stock,String $price,String $categoryId)
+    public function create(String $name, String $stock, String $price, String $categoryId)
     {
-        return parent::createWith([
+        return $this->productRepository->create([
             'name' => $name,
             'stock' => $stock,
             'price' => $price,
@@ -39,14 +54,13 @@ class ProductService extends GenericService {
      *
      * @return boolean
      */
-    public function update(Product $product ,Array $newValue)
+    public function update(Product $product, array $newValue)
     {
         $attributes  = [];
-        foreach($newValue as $column => $value){
+        foreach ($newValue as $column => $value) {
             $attributes[$column] = $value;
         }
 
-        return parent::updateIn($product, $attributes);
+        return $this->productRepository->update($product, $attributes);
     }
-
 }

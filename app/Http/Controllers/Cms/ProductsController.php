@@ -6,7 +6,8 @@ use App\Http\Controllers\Cms\CmsController;
 use App\Http\Requests\ProductsFormRequest;
 use Illuminate\Http\Request;
 use App\Model\Category;
-use App\Services\CategoryService;
+use App\Repository\CategoryRepository;
+use App\Repository\ProductRepository;
 use App\Services\ProductService;
 
 class ProductsController extends CmsController
@@ -23,19 +24,19 @@ class ProductsController extends CmsController
     protected $_actionIndex = 'Cms\ProductsController@index';
 
     /**
-     * Service
+     * Repository
      *
-     * @var \App\Services\ProductService $service
+     * @var \App\Repository\ProductRepository $repository
      */
-    private $service;
+    private $repository;
 
     /**
      * Construct
      */
-    function __construct(ProductService $service)
+    function __construct(ProductRepository $repository)
     {
         parent::__construct('product');
-        $this->service = $service;
+        $this->repository = $repository;
     }
 
     /**
@@ -45,8 +46,8 @@ class ProductsController extends CmsController
      */
     public function index(Request $request)
     {
-        $products = $this->service->paginate($this->_itensPerPages);
-        return $this->showView( __FUNCTION__ , compact('products'));
+        $products = $this->repository->paginate($this->_itensPerPages);
+        return $this->showView(__FUNCTION__, compact('products'));
     }
 
     /**
@@ -54,28 +55,29 @@ class ProductsController extends CmsController
      *
      * @return \Illuminate\Http\Response
      */
-    public function create(CategoryService $categoryService)
+    public function create(CategoryRepository $categoryRepository)
     {
-        $categories = $categoryService->list('name');
-        return $this->showView( __FUNCTION__ , compact('categories'));
+        $categories = $categoryRepository->lists('name');
+        return $this->showView(__FUNCTION__, compact('categories'));
     }
 
     /**
      * Store a newly created resource in storage.
      *
      * @param  App\Http\Requests\ProductsFormRequest  $request
+     * @param  App\Services\ProductService
      * @return \Illuminate\Http\Response
      */
-    public function store(ProductsFormRequest $request)
+    public function store(ProductsFormRequest $request, ProductService $service)
     {
-        $product = $this->service->create(
+        $product = $service->create(
             $request->name,
             $request->stock,
             $request->price,
             $request->category_id
         );
 
-        return $this->returnIndexStatusOk($product->name.' created');
+        return $this->returnIndexStatusOk($product->name . ' created');
     }
 
     /**
@@ -95,37 +97,38 @@ class ProductsController extends CmsController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id, CategoryService $categoryService)
+    public function edit($id, CategoryRepository $categoryRepository)
     {
-        $product = $this->service->find($id);
+        $product = $this->repository->find($id);
 
-        if(empty($product)) {
+        if (empty($product)) {
             return $this->returnIndexStatusNotOk(__('Not found!!'));
         }
 
-        $categories = $categoryService->list('name');
+        $categories = $categoryRepository->lists('name');
 
-        return $this->showView( __FUNCTION__ , compact('product','categories'));
+        return $this->showView(__FUNCTION__, compact('product', 'categories'));
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  App\Http\Requests\ProductsFormRequest  $request
+     * @param  App\Services\ProductService $service
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(ProductsFormRequest $request, $id)
+    public function update(ProductsFormRequest $request, ProductService $service, $id)
     {
-        $product = $this->service->find($id);
+        $product = $this->repository->find($id);
 
-        if(empty($product)) {
+        if (empty($product)) {
             return $this->returnIndexStatusNotOk(__('Not found!!'));
         }
 
-        $this->service->update(
+        $service->update(
             $product,
-            $request->only(['name','stock','price','category_id'])
+            $request->only(['name', 'stock', 'price', 'category_id'])
         );
 
         return $this->returnIndexStatusOk('Updated');
@@ -139,13 +142,13 @@ class ProductsController extends CmsController
      */
     public function destroy($id)
     {
-        $product = $this->service->find($id);
+        $product = $this->repository->find($id);
 
-        if(empty($product)) {
+        if (empty($product)) {
             return $this->returnIndexStatusNotOk(__('Not found!!'));
         }
 
-        $this->service->delete($product);
+        $this->repository->delete($product);
 
         return $this->returnIndexStatusOk('Deleted');
     }

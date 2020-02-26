@@ -6,7 +6,8 @@ namespace App\Http\Controllers\Cms;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Cms\CmsController;
 use App\Http\Requests\UsersFormRequest;
-use App\Services\RoleService;
+use App\Repository\RoleRepository;
+use App\Repository\UserRepository;
 use App\Services\UserService;
 use App\User;
 use Spatie\Permission\Models\Role;
@@ -28,21 +29,21 @@ class UserController extends CmsController
     protected $_actionIndex = 'Cms\UserController@index';
 
     /**
-     * Service
+     * Repository
      *
-     * @var \App\Services\UserService $service
+     * @var \App\Repository\UserRepository $repository
      */
-    private $service;
+    private $repository;
 
 
 
     /**
      * Construct
      */
-    function __construct(UserService $service)
+    function __construct(UserRepository $repository)
     {
         parent::__construct('user');
-        $this->service = $service;
+        $this->repository = $repository;
     }
 
     /**
@@ -52,9 +53,8 @@ class UserController extends CmsController
      */
     public function index(Request $request)
     {
-        $users = $this->service->paginate($this->_itensPerPages);
-        return $this->showView( __FUNCTION__ ,compact('users'));
-
+        $users = $this->repository->paginate($this->_itensPerPages);
+        return $this->showView(__FUNCTION__, compact('users'));
     }
 
     /**
@@ -62,21 +62,22 @@ class UserController extends CmsController
      *
      * @return \Illuminate\Http\Response
      */
-    public function create(RoleService $roleService)
+    public function create(RoleRepository $roleRepository)
     {
-        $roles = $roleService->list('name');
-        return $this->showView( __FUNCTION__ ,compact('roles'));
+        $roles = $roleRepository->lists('name');
+        return $this->showView(__FUNCTION__, compact('roles'));
     }
 
     /**
      * Store a newly created resource in storage.
      *
      * @param  App\Http\Requests\UsersFormRequest  $request
+     * @param  App\Services\UserService $service
      * @return \Illuminate\Http\Response
      */
-    public function store(UsersFormRequest $request)
+    public function store(UsersFormRequest $request, UserService $service)
     {
-        $user = $this->service->create(
+        $user = $service->create(
             $request->name,
             $request->email,
             $request->password,
@@ -94,8 +95,8 @@ class UserController extends CmsController
      */
     public function show($id)
     {
-        $user = $this->service->find($id);
-        return $this->showView( __FUNCTION__ ,compact('user'));
+        $user = $this->repository->find($id);
+        return $this->showView(__FUNCTION__, compact('user'));
     }
 
     /**
@@ -104,39 +105,40 @@ class UserController extends CmsController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id,RoleService $roleService)
+    public function edit($id, RoleRepository $roleRepository)
     {
-        $user = $this->service->find($id);
+        $user = $this->repository->find($id);
 
-        if(empty($user)) {
+        if (empty($user)) {
             return $this->returnIndexStatusNotOk(__('Not found!!'));
         }
 
-        $roles = $roleService->list('name','name');
+        $roles = $roleRepository->lists('name', 'name');
 
-        $userRole = $user->roles->pluck('name','name')->all();
+        $userRole = $user->roles->pluck('name', 'name')->all();
 
-        return $this->showView( __FUNCTION__ ,compact('user','roles','userRole'));
+        return $this->showView(__FUNCTION__, compact('user', 'roles', 'userRole'));
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  App\Http\Requests\UsersFormRequest  $request
+     * @param  App\Services\UserService $service
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(UsersFormRequest $request, $id)
+    public function update(UsersFormRequest $request, UserService $service, $id)
     {
-        $user = $this->service->find($id);
+        $user = $this->repository->find($id);
 
-        if(empty($user)) {
+        if (empty($user)) {
             return $this->returnIndexStatusNotOk(__('Not found!!'));
         }
 
-        $this->service->update(
+        $service->update(
             $user,
-            $request->only(['name','email','password']),
+            $request->only(['name', 'email', 'password']),
             $request->input('roles')
         );
 
@@ -151,13 +153,13 @@ class UserController extends CmsController
      */
     public function destroy($id)
     {
-        $user = $this->service->find($id);
+        $user = $this->repository->find($id);
 
-        if(empty($user)){
+        if (empty($user)) {
             return $this->returnIndexStatusNotOk(__('Not found!'));
         }
 
-        $this->service->delete($user);
+        $this->repository->delete($user);
 
         return $this->returnIndexStatusOk('User deleted successfully');
     }

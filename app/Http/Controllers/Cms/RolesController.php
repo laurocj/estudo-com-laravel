@@ -10,7 +10,8 @@ use Spatie\Permission\Models\Permission;
 
 use App\Http\Controllers\Cms\CmsController;
 use App\Http\Requests\RolesFormRequest;
-use App\Services\PermissionService;
+use App\Repository\PermissionRepository;
+use App\Repository\RoleRepository;
 use App\Services\RoleService;
 
 class RolesController extends CmsController
@@ -26,21 +27,21 @@ class RolesController extends CmsController
     protected $_actionIndex = 'Cms\RolesController@index';
 
     /**
-     * Service
+     * Repository
      *
-     * @var \App\Services\RoleService $service
+     * @var \App\Repository\RoleRepository $repository
      */
-    private $service;
+    private $repository;
 
 
 
     /**
      * Construct
      */
-    function __construct(RoleService $service)
+    function __construct(RoleRepository $repository)
     {
         parent::__construct('role');
-        $this->service = $service;
+        $this->repository = $repository;
     }
 
     /**
@@ -50,8 +51,8 @@ class RolesController extends CmsController
      */
     public function index(Request $request)
     {
-        $roles = $this->service->paginate($this->_itensPerPages);
-        return $this->showView( __FUNCTION__,compact('roles'));
+        $roles = $this->repository->paginate($this->_itensPerPages);
+        return $this->showView(__FUNCTION__, compact('roles'));
     }
 
     /**
@@ -59,21 +60,22 @@ class RolesController extends CmsController
      *
      * @return \Illuminate\Http\Response
      */
-    public function create(PermissionService $permissionService)
+    public function create(PermissionRepository $permissionRepository)
     {
-        $permissions = $permissionService->list('name');
-        return $this->showView(__FUNCTION__,compact('permissions'));
+        $permissions = $permissionRepository->lists('name');
+        return $this->showView(__FUNCTION__, compact('permissions'));
     }
 
     /**
      * Store a newly created resource in storage.
      *
      * @param  App\Http\Requests\RolesFormRequest  $request
+     * @param  App\Services\RoleService $service
      * @return \Illuminate\Http\Response
      */
-    public function store(RolesFormRequest $request)
+    public function store(RolesFormRequest $request, RoleService $service)
     {
-        $role = $this->service->create(
+        $role = $service->create(
             $request->input('name'),
             $request->input('permissions')
         );
@@ -89,11 +91,11 @@ class RolesController extends CmsController
      */
     public function show($id)
     {
-        $role = $this->service->find($id);
+        $role = $this->repository->find($id);
 
         $rolePermissions = $role->permissions;
 
-        return $this->showView( __FUNCTION__ ,compact('role','rolePermissions'));
+        return $this->showView(__FUNCTION__, compact('role', 'rolePermissions'));
     }
 
     /**
@@ -102,37 +104,38 @@ class RolesController extends CmsController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id, PermissionService $permissionService)
+    public function edit($id, PermissionRepository $permissionRepository)
     {
-        $role = $this->service->find($id);
+        $role = $this->repository->find($id);
 
-        if(empty($role)) {
+        if (empty($role)) {
             return $this->returnIndexStatusNotOk(__('Not found!!'));
         }
 
-        $permissions = $permissionService->list('name');
+        $permissions = $permissionRepository->lists('name');
 
-        $rolePermissions = $role->permissions->pluck('id','id')->toArray();
+        $rolePermissions = $role->permissions->pluck('id', 'id')->toArray();
 
-        return $this->showView(__FUNCTION__,compact('role','permissions','rolePermissions'));
+        return $this->showView(__FUNCTION__, compact('role', 'permissions', 'rolePermissions'));
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  App\Http\Requests\RolesFormRequest  $request
+     * @param  App\Services\RoleService $service
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(RolesFormRequest $request, $id)
+    public function update(RolesFormRequest $request, RoleService $service, $id)
     {
-        $role = $this->service->find($id);
+        $role = $this->repository->find($id);
 
-        if(empty($role)) {
+        if (empty($role)) {
             return $this->returnIndexStatusNotOk(__('Not found!!'));
         }
 
-        $this->service->update(
+        $service->update(
             $role,
             ['name' => $request->input('name')],
             $request->input('permissions')
@@ -149,15 +152,14 @@ class RolesController extends CmsController
      */
     public function destroy($id)
     {
-        $role = $this->service->find($id);
+        $role = $this->repository->find($id);
 
-        if(empty($role)) {
+        if (empty($role)) {
             return $this->returnIndexStatusNotOk(__('Not found!!'));
         }
 
-        $this->service->delete($role);
+        $this->repository->delete($role);
 
         return $this->returnIndexStatusOk('Role deleted successfully');
     }
-
 }

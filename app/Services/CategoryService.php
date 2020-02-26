@@ -3,12 +3,27 @@
 namespace App\Services;
 
 use App\Model\Category;
-use App\Services\GenericService;
+use App\Repository\CategoryRepository;
 
-class CategoryService extends GenericService {
+class CategoryService
+{
 
-    public function __construct() {
-        parent::__construct(Category::class);
+    /**
+     * Category Repository
+     *
+     * @var CategoryRepository
+     */
+    private $categoryRepository;
+
+    /**
+     * Category Repository
+     * @param CategoryRepository
+     *
+     * @return this
+     */
+    public function __construct(CategoryRepository $categoryRepository)
+    {
+        $this->categoryRepository = $categoryRepository;
     }
 
     /**
@@ -20,7 +35,7 @@ class CategoryService extends GenericService {
      */
     public function create(String $name)
     {
-        return parent::createWith([
+        return $this->categoryRepository->create([
             'name' => $name
         ]);
     }
@@ -33,13 +48,13 @@ class CategoryService extends GenericService {
      *
      * @return boolean
      */
-    public function update(Category $category, Array $newValue)
+    public function update(Category $category, array $newValue)
     {
         $attribules = [];
-        foreach($newValue as $column => $value){
+        foreach ($newValue as $column => $value) {
             $attribules[$column] = $value;
         }
 
-        return parent::updateIn($category,$attribules);
+        return $this->categoryRepository->update($category, $attribules);
     }
 }

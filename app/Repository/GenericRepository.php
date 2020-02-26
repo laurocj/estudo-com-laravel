@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Services;
+namespace App\Repository;
 
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
-class GenericService
+class GenericRepository
 {
 
     /**
@@ -14,7 +14,7 @@ class GenericService
     private $model;
 
     /**
-     * GenericService constructor.
+     * GenericRepository constructor.
      *
      * @param string $model
      */
@@ -29,9 +29,9 @@ class GenericService
      *
      * @return bool
      */
-    protected function checkModel($model) : bool
+    protected function checkModel($model): bool
     {
-        if(!$model instanceof \Illuminate\Database\Eloquent\Model) {
+        if (!$model instanceof \Illuminate\Database\Eloquent\Model) {
             throw new \InvalidArgumentException(sprintf(
                 'Invalid instance of [%s], only instances of \Illuminate\Database\Eloquent\Model are allowed.',
                 get_class($model)
@@ -46,7 +46,7 @@ class GenericService
      *
      * @return Illuminate\Database\Eloquent\Collection
      */
-    public function all($columns = ['*']) : Collection
+    public function all($columns = ['*']): Collection
     {
         return $this->model::all($columns);
     }
@@ -56,7 +56,7 @@ class GenericService
      *
      * @return boolean
      */
-    public function delete(Model $model) : bool
+    public function delete(Model $model): bool
     {
         $this->checkModel($model);
 
@@ -76,11 +76,10 @@ class GenericService
     /**
      * @param  string  $value
      * @param  string|null  $key
-     * @return array
      *
      * @return Illuminate\Database\Eloquent\Collection
      */
-    public function list(String $value, $key = 'id')
+    public function lists(String $value, $key = 'id')
     {
         return $this->model::pluck($value, $key)->all();
     }
@@ -90,9 +89,9 @@ class GenericService
      *
      * @return \Illuminate\Pagination\LengthAwarePaginator
      */
-    public function paginate(int $perPage) : \Illuminate\Pagination\LengthAwarePaginator
+    public function paginate(int $perPage): \Illuminate\Pagination\LengthAwarePaginator
     {
-        return $this->model::orderBy('id','DESC')->paginate($perPage);
+        return $this->model::orderBy('id', 'DESC')->paginate($perPage);
     }
 
     /**
@@ -100,7 +99,7 @@ class GenericService
      *
      * @return \Illuminate\Database\Eloquent\Model
      */
-    protected function createWith(Array $attributes) : Model
+    public function create(array $attributes): Model
     {
         return $this->model::create($attributes);
     }
@@ -111,7 +110,7 @@ class GenericService
      *
      * @return boolean
      */
-    protected function updateIn(Model $model, Array $attributes) : bool
+    public function update(Model $model, array $attributes): bool
     {
         $this->checkModel($model);
 

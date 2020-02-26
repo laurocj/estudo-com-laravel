@@ -2,6 +2,7 @@
 
 namespace Tests\Unit;
 
+use App\Repository\UserRepository;
 use App\Services\UserService;
 use App\User;
 use Tests\TestCase;
@@ -23,7 +24,7 @@ class UsersTest extends TestCase
         $email = 'email@teste.com';
         $password = 'password';
 
-        $service = new UserService();
+        $service = new UserService(new UserRepository());
 
         $user = $service->create(
             $name,
@@ -31,7 +32,7 @@ class UsersTest extends TestCase
             $password
         );
 
-        $this->assertInstanceOf(User::class,$user);
+        $this->assertInstanceOf(User::class, $user);
         $this->assertDatabaseHas('users', ['name' => $name]);
         $this->assertTrue(Hash::check($password, $user->password));
 
@@ -57,7 +58,7 @@ class UsersTest extends TestCase
     {
         $newName = 'Usuario test';
 
-        $service = new UserService();
+        $service = new UserService(new UserRepository());
 
         $updated = $service->update(
             $user,
@@ -66,7 +67,7 @@ class UsersTest extends TestCase
 
         $this->assertTrue($updated);
 
-        $this->assertEquals(User::find($user->id)->name,$newName);
+        $this->assertEquals(User::find($user->id)->name, $newName);
 
         $user->delete();
     }

@@ -2,13 +2,28 @@
 
 namespace App\Services;
 
-use App\Services\GenericService;
+use App\Repository\PermissionRepository;
 use Spatie\Permission\Models\Permission;
 
-class PermissionService extends GenericService {
+class PermissionService
+{
 
-    public function __construct() {
-        parent::__construct(Permission::class);
+    /**
+     * Permission Repository
+     *
+     * @var PermissionRepository
+     */
+    private $permissionRepository;
+
+    /**
+     * Permission Repository
+     * @param PermissionRepository
+     *
+     * @return this
+     */
+    public function __construct(PermissionRepository $permissionRepository)
+    {
+        $this->permissionRepository = $permissionRepository;
     }
 
     /**
@@ -20,7 +35,7 @@ class PermissionService extends GenericService {
      */
     public function create(String $name)
     {
-        return parent::createWith([
+        return $this->permissionRepository->create([
             'name' => $name
         ]);
     }
@@ -33,13 +48,13 @@ class PermissionService extends GenericService {
      *
      * @return boolean
      */
-    public function update(Permission $permission, Array $newValue)
+    public function update(Permission $permission, array $newValue)
     {
         $attribules = [];
-        foreach($newValue as $column => $value){
+        foreach ($newValue as $column => $value) {
             $attribules[$column] = $value;
         }
 
-        return parent::updateIn($permission,$attribules);
+        return $this->permissionRepository->update($permission, $attribules);
     }
 }

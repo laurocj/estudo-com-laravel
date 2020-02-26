@@ -2,14 +2,30 @@
 
 namespace App\Services;
 
+use App\Repository\RoleRepository;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\DB;
 use App\Services\PaginatedAbstract;
 
-class RoleService  extends GenericService {
+class RoleService
+{
 
-    public function __construct() {
-        parent::__construct(Role::class);
+    /**
+     * Role Repository
+     *
+     * @var RoleRepository
+     */
+    private $roleRepository;
+
+    /**
+     * Role Repository
+     * @param RoleRepository
+     *
+     * @return this
+     */
+    public function __construct(RoleRepository $roleRepository)
+    {
+        $this->roleRepository = $roleRepository;
     }
 
     /**
@@ -20,7 +36,7 @@ class RoleService  extends GenericService {
      *
      * @return Role
      */
-    public function create(String $name, Array $permissions)
+    public function create(String $name, array $permissions)
     {
         // Forma com function
         // $role = null;
@@ -30,7 +46,7 @@ class RoleService  extends GenericService {
         // });
 
         // DB::beginTransaction();
-        $role = parent::createWith(['name' => $name]);
+        $role = $this->roleRepository->create(['name' => $name]);
         $role->syncPermissions($permissions);
         // DB::commint();
 
@@ -46,25 +62,24 @@ class RoleService  extends GenericService {
      *
      * @return boolean
      */
-    public function update(Role $role, Array $newValue, Array $permissions = [])
+    public function update(Role $role, array $newValue, array $permissions = [])
     {
         $attributes = [];
-        foreach($newValue as $column => $value) {
-            if(!is_numeric($column)) {
-                if(is_array($value) && $column == 'permissions') {
-                    $permissions = array_merge($permissions,$value);
+        foreach ($newValue as $column => $value) {
+            if (!is_numeric($column)) {
+                if (is_array($value) && $column == 'permissions') {
+                    $permissions = array_merge($permissions, $value);
                 } else
-                if(is_string($column) && !is_array($value)) {
+                if (is_string($column) && !is_array($value)) {
                     $attributes[$column] = $value;
                 }
             }
         }
 
-        if(!empty($permissions)) {
+        if (!empty($permissions)) {
             $role->syncPermissions($permissions);
         }
 
-        return parent::updateIn($role,$attributes);
+        return $this->roleRepository->update($role, $attributes);
     }
 }
-
