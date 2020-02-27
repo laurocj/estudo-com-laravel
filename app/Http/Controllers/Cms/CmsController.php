@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Cms;
 
-use Illuminate\Http\Request;
-
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Support\Facades\Request as Request;
+use Illuminate\Support\Facades\View as View;
 
 class CmsController extends BaseController
 {
@@ -39,9 +39,9 @@ class CmsController extends BaseController
      */
     function __construct($modelPermission)
     {
-        $this->middleware("permission:$modelPermission-list|$modelPermission-create|$modelPermission-edit|$modelPermission-delet", ['only' => ['index','store']]);
-        $this->middleware("permission:$modelPermission-create", ['only' => ['create','store']]);
-        $this->middleware("permission:$modelPermission-edit", ['only' => ['edit','update']]);
+        $this->middleware("permission:$modelPermission-list|$modelPermission-create|$modelPermission-edit|$modelPermission-delet", ['only' => ['index', 'store']]);
+        $this->middleware("permission:$modelPermission-create", ['only' => ['create', 'store']]);
+        $this->middleware("permission:$modelPermission-edit", ['only' => ['edit', 'update']]);
         $this->middleware("permission:$modelPermission-delete", ['only' => ['destroy']]);
     }
 
@@ -53,11 +53,17 @@ class CmsController extends BaseController
      *
      * @return \Illuminate\Http\Response
      */
-    protected function showView($name ,$data = [])
+    protected function showView($name, $data = [])
     {
         $this->setLayout($data);
 
-        return view($this->_path.$name,$data);
+        $view = view($this->_path . $name, $data);
+
+        if (Request::ajax()) {
+            return $view->renderSections()['content'];
+        }
+
+        return $view;
     }
 
     /**
@@ -66,27 +72,27 @@ class CmsController extends BaseController
      *
      * @return \Illuminate\Http\Response
      */
-     protected function returnIndexStatusOk($msg)
-     {
+    protected function returnIndexStatusOk($msg)
+    {
         return redirect()
             ->action($this->_actionIndex)
-            ->with($this->_varStatusOk,$msg);
-     }
+            ->with($this->_varStatusOk, $msg);
+    }
 
-     /**
+    /**
      * Redirect with status not ok
      * @param string $msg
      *
      * @return \Illuminate\Http\Response
      */
-     protected function returnIndexStatusNotOk($msg)
-     {
+    protected function returnIndexStatusNotOk($msg)
+    {
         return redirect()
             ->action($this->_actionIndex)
-            ->with($this->_varStatusNok,$msg);
-     }
+            ->with($this->_varStatusNok, $msg);
+    }
 
-     /**
+    /**
      * Set layout
      *
      * @param array $data array data returned

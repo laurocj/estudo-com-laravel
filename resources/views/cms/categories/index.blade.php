@@ -11,7 +11,7 @@
             <h1 class="h2">{{__('Categories')}}</h1>
 
             @can('category-create')
-                <a href="{{ route('categorias.create') }}" class="btn btn-outline-success">{{__('New')}}</a>
+            <a href="{{ route('categorias.create') }}" class="btn btn-outline-success">{{__('New')}}</a>
             @endcan
         </div>
 
@@ -25,16 +25,22 @@
             </thead>
             <tbody>
                 @foreach($categories as $category)
-                    <tr>
-                        <td>{{$category->id}}</td>
-                        <td>{{$category->name}}</td>
-                        <td>
-                            <a href="{{route('categorias.edit',$category->id)}}" class='btn btn-primary btn-sm'>Edit</a>
-                            {!! Form::open(array('route' => ['categorias.destroy',$category->id],'method' => 'delete','class'=>'d-inline')) !!}
-                            {!! Form::submit(__('Delete'), array( 'class'=>'btn btn-danger btn-sm' )) !!}
-                            {!! Form::close() !!}
-                        </td>
-                    </tr>
+                <tr>
+                    <td>{{$category->id}}</td>
+                    <td>{{$category->name}}</td>
+                    <td>
+                        <a href="{{route('categorias.edit',$category->id)}}" class='btn btn-primary btn-sm'>Edit</a>
+
+                        <a data-toggle="modal" data-load-url="{{route('categorias.edit',$category->id)}}"
+                            data-target="#modalContent" href="#" class='btn btn-dark btn-sm'>Edit - modal</a>
+
+
+                        {!! Form::open(array('route' => ['categorias.destroy',$category->id],'method' =>
+                        'delete','class'=>'d-inline')) !!}
+                        {!! Form::submit(__('Delete'), array( 'class'=>'btn btn-danger btn-sm' )) !!}
+                        {!! Form::close() !!}
+                    </td>
+                </tr>
                 @endforeach
             </tbody>
         </table>

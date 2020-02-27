@@ -9,3 +9,7 @@
 body{
     height: 94vh;
 }
+
+main table thead tr th:nth-last-child(1) {
+    width: 25% !important;
+}

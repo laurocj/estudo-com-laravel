@@ -1,4 +1,4 @@
-window._ = require('lodash');
+// window._ = require('lodash');
 
 /**
  * We'll load jQuery and the Bootstrap jQuery plugin which provides support
@@ -20,9 +20,9 @@ try {
  * CSRF token as a header based on the value of the "XSRF" token cookie.
  */
 
-window.axios = require('axios');
+// window.axios = require('axios');
 
-window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+// window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
 /**
  * Echo exposes an expressive API for subscribing to channels and listening
@@ -40,3 +40,43 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 //     cluster: process.env.MIX_PUSHER_APP_CLUSTER,
 //     encrypted: true
 // });
+
+$('.modal').on('show.bs.modal', function (e) {
+    var loadurl = $(e.relatedTarget).data('load-url');
+    $(this).find('.modal-body').load(loadurl);
+});
+
+$('.modal').on('shown.bs.modal', function (e) {
+    var modal = $(this);
+    modal.find('form').on('submit',function(e) {
+        var requestForm = $(this);
+        if (requestForm.length) {
+            e.preventDefault();
+            e.isDefaultPrevented();
+            requestForm[0].checkValidity();
+            $.ajax({
+                url: requestForm.attr('action'),
+                type: "POST",
+                data: new FormData(requestForm[0]),
+                processData: false,
+                contentType: false,
+                beforeSend: function() {
+                    requestForm.find('.btn-primary').html('Processing...');
+                },
+                success: function(data) {
+                    $("body .container-fluid main").html(data);
+                    modal.modal('hide');
+                },
+                error: function(data) {
+                    $.each(data.responseJSON.errors,function(key,value){
+                        $("[name='"+key+"']")
+                            .addClass('is-invalid')
+                            .parent()
+                            .append('<div class="invalid-feedback">'+value+'</div>');
+                    });
+                }
+            });
+            return false;
+        }
+    });
+});

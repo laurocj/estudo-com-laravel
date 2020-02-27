@@ -15,9 +15,18 @@
                 @include('cms.layouts.menu')
             </nav>
 
-            <main class="col-12 col-sm">
+            <main class="col-12 col-sm pt-3">
                 @yield('content')
             </main>
+
+            <div class="modal fade" id="modalContent" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                        </div>
+                    </div>
+                </div>
+            </div>
 
         </div>
 
@@ -26,6 +35,5 @@
     @include('cms.layouts.js')
 
 </body>
-
 
 </html>
