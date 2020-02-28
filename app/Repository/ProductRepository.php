@@ -6,11 +6,12 @@ use App\Model\Product;
 use App\Repository\GenericRepository;
 
 
-class ProductRepository extends GenericRepository
+class ProductRepository
 {
+    use GenericRepository;
 
-    public function __construct()
+    public function getModel()
     {
-        parent::__construct(Product::class);
+        return Product::class;
     }
 }

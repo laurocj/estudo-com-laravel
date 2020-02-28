@@ -6,11 +6,12 @@ use App\User;
 use App\Repository\GenericRepository;
 
 
-class UserRepository extends GenericRepository
+class UserRepository
 {
+    use GenericRepository;
 
-    public function __construct()
+    public function getModel()
     {
-        parent::__construct(User::class);
+        return User::class;
     }
 }

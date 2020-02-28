@@ -6,11 +6,12 @@ use App\Model\Category;
 use App\Repository\GenericRepository;
 
 
-class CategoryRepository extends GenericRepository
+class CategoryRepository
 {
+    use GenericRepository;
 
-    public function __construct()
+    public function getModel()
     {
-        parent::__construct(Category::class);
+        return Category::class;
     }
 }

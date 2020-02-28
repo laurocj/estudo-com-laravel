@@ -5,41 +5,15 @@ namespace App\Repository;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
-class GenericRepository
+trait GenericRepository
 {
 
     /**
-     * @var Model
+     * Get Model::class
+     * @return Stirng
      */
-    private $model;
+    abstract public function getModel();
 
-    /**
-     * GenericRepository constructor.
-     *
-     * @param string $model
-     */
-    public function __construct(string $model)
-    {
-        $this->model = new $model;
-        $this->checkModel($this->model);
-    }
-
-    /**
-     * @param $model
-     *
-     * @return bool
-     */
-    protected function checkModel($model): bool
-    {
-        if (!$model instanceof \Illuminate\Database\Eloquent\Model) {
-            throw new \InvalidArgumentException(sprintf(
-                'Invalid instance of [%s], only instances of \Illuminate\Database\Eloquent\Model are allowed.',
-                get_class($model)
-            ));
-        }
-
-        return true;
-    }
 
     /**
      * @param Array $columns
@@ -48,7 +22,7 @@ class GenericRepository
      */
     public function all($columns = ['*']): Collection
     {
-        return $this->model::all($columns);
+        return $this->getModel()::all($columns);
     }
 
     /**
@@ -58,8 +32,6 @@ class GenericRepository
      */
     public function delete(Model $model): bool
     {
-        $this->checkModel($model);
-
         return $model->delete();
     }
 
@@ -70,7 +42,7 @@ class GenericRepository
      */
     public function find(int $id): Model
     {
-        return $this->model::find($id);
+        return $this->getModel()::find($id);
     }
 
     /**
@@ -81,7 +53,7 @@ class GenericRepository
      */
     public function lists(String $value, $key = 'id')
     {
-        return $this->model::pluck($value, $key)->all();
+        return $this->getModel()::pluck($value, $key)->all();
     }
 
     /**
@@ -91,7 +63,7 @@ class GenericRepository
      */
     public function paginate(int $perPage): \Illuminate\Pagination\LengthAwarePaginator
     {
-        return $this->model::orderBy('id', 'DESC')->paginate($perPage);
+        return $this->getModel()::orderBy('id', 'DESC')->paginate($perPage);
     }
 
     /**
@@ -101,7 +73,7 @@ class GenericRepository
      */
     public function create(array $attributes): Model
     {
-        return $this->model::create($attributes);
+        return $this->getModel()::create($attributes);
     }
 
     /**
@@ -112,8 +84,6 @@ class GenericRepository
      */
     public function update(Model $model, array $attributes): bool
     {
-        $this->checkModel($model);
-
         return $model->update($attributes);
     }
 }

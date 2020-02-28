@@ -5,10 +5,12 @@ namespace App\Repository;
 use App\Repository\GenericRepository;
 use Spatie\Permission\Models\Role;
 
-class RoleRepository extends GenericRepository
+class RoleRepository
 {
-    public function __construct()
+    use GenericRepository;
+
+    public function getModel()
     {
-        parent::__construct(Role::class);
+        return Role::class;
     }
 }
