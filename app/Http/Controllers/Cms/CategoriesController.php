@@ -46,9 +46,32 @@ class CategoriesController extends CmsController
      */
     public function index(Request $request)
     {
-        $categories = $this->repository->paginate($this->_itensPerPages);
+        $this->_itensPerPages = $request->itensPerPages ?? $this->_itensPerPages;
+        if (empty($request->q)) {
+            $categories = $this->repository
+            ->paginate($this->_itensPerPages)
+            ->appends(['itensPerPages' => $this->_itensPerPages]);
+        } else {
+            $categories = $this->search($request);
+        }
 
         return $this->showView(__FUNCTION__, compact('categories'));
+    }
+
+    /**
+     * Para pesquisa
+     * @param Request $request
+     */
+    public function search(Request $request)
+    {
+        if ($request->has('q')) {
+            $search = [];
+            $search['name'] = $request->q;
+            $appends['q'] = $request->q;
+            $appends['itensPerPages'] = $this->_itensPerPages;
+            return $this->repository->search($request->itensPerPages ?? $this->_itensPerPages, $search)
+            ->appends($appends);
+        }
     }
 
     /**
