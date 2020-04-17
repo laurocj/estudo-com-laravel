@@ -159,7 +159,7 @@ class UserController extends CmsController
             return $this->returnIndexStatusNotOk(__('Not found!'));
         }
 
-        $this->repository->delete($user);
+        $this->repository->delete($id);
 
         return $this->returnIndexStatusOk('User deleted successfully');
     }

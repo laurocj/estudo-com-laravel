@@ -3,15 +3,12 @@
 namespace App\Repository;
 
 use App\Model\Category;
-use App\Repository\GenericRepository;
+use App\Repository\BaseRepository;
 
-
-class CategoryRepository
+class CategoryRepository extends BaseRepository
 {
-    use GenericRepository;
-
-    public function getModel()
+    public function __construct()
     {
-        return Category::class;
+        $this->query = Category::query();
     }
 }

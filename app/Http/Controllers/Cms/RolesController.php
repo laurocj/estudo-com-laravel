@@ -158,7 +158,7 @@ class RolesController extends CmsController
             return $this->returnIndexStatusNotOk(__('Not found!!'));
         }
 
-        $this->repository->delete($role);
+        $this->repository->delete($id);
 
         return $this->returnIndexStatusOk('Role deleted successfully');
     }

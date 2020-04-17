@@ -4,17 +4,11 @@ namespace App\Repository;
 
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 
-trait GenericRepository
+abstract class BaseRepository
 {
-
-    /**
-     * Retorna a class que será usada
-     *
-     * @return Illuminate\Database\Eloquent\Model  Model::class
-     */
-    abstract public function getModel();
-
 
     /**
      * O mesmo que all do eloquent https://laravel.com/docs/5.8/eloquent#retrieving-models
@@ -26,8 +20,7 @@ trait GenericRepository
      */
     public function all($columns = ['*'], $limit = 10): Collection
     {
-        $columns = $this->realColumns($this->getModel(), $columns);
-        return $this->getModel()::limit($limit)->get($columns);
+        return $this->query->limit($limit)->get($columns);
     }
 
     /**
@@ -51,7 +44,7 @@ trait GenericRepository
      */
     public function find(int $id)
     {
-        return $this->getModel()::find($id);
+        return $this->query->find($id);
     }
 
     /**
@@ -68,14 +61,13 @@ trait GenericRepository
         if (is_null($key)) {
             $key = $this->getPrimaryKey();
         } else {
-            $key = $this->realColumns($this->getModel(), $key);
+            $key = $key;
         }
 
-        $columns = $this->realColumns($this->getModel(), $columns);
         $columns = is_array($columns) ? $columns : [$columns];
         $select = $columns;
         $select[] = $key;
-        $query = $this->getModel()::select($select)->whereNotNull($columns);
+        $query = $this->query->select($select)->whereNotNull($columns);
 
         if (is_numeric($limit)) {
             $query->limit($limit);
@@ -104,7 +96,7 @@ trait GenericRepository
     public function paginate(int $perPage): \Illuminate\Pagination\LengthAwarePaginator
     {
         $key = $this->getPrimaryKey();
-        return $this->getModel()::orderBy($key, 'DESC')->paginate($perPage);
+        return $this->query->orderBy($key, 'DESC')->paginate($perPage);
     }
 
     /**
@@ -119,56 +111,125 @@ trait GenericRepository
      */
     public function search(int $perPage, array $fieldsForResearch, $orderBy = null): \Illuminate\Pagination\LengthAwarePaginator
     {
-        $query = $this->getModel()::query();
-
-        foreach ($this->realColumns($this->getModel(), $fieldsForResearch) as $field => $value) {
-            if (strpos($field, '.') !== false) {
-                $fields = explode('.', $field);
-
-                if (count($fields) == 2) {
-                    list($relationship, $field) = $fields;
-
-                    $query->orWhereHas($relationship, function ($query) use ($field, $value) {
-                        $field = $this->realColumns($query->getModel(), $field);
-                        $query->where($query->getModel()->getTable() . "." . $field, 'LIKE', '%' . $value . '%');
-                    });
-                } else {
-                    $relationship = array_shift($fields);
-
-                    $query->orWhereHas($relationship, function ($query) use ($fields, $value) {
-                        list($relationship, $field) = $fields;
-                        $query->whereHas($relationship, function ($query) use ($field, $value) {
-                            $field = $this->realColumns($query->getModel(), $field);
-                            $query->where($query->getModel()->getTable() . "." . $field, 'LIKE', '%' . $value . '%');
-                        });
-                    });
-                }
-            } else {
-                $query->orWhere($field, 'LIKE', '%' . $value . '%');
-            }
+        foreach ($fieldsForResearch as $field => $keyword) {
+            $this->compileQuerySearch($this->query,$field, $keyword);
         }
 
         if (!is_null($orderBy)) {
-            $query->orderBy( $this->realColumns( $this->getModel(), $orderBy), 'ASC');
+            $this->compileQueryOrderBy($this->query, $orderBy, 'ASC');
         }
 
-        // return $query->paginate($perPage)->appends($fieldsForResearch);
-        return $query->paginate($perPage);
+        return $this->query->paginate($perPage);
     }
 
     /**
-     * Classes que usam o FieldMapTrait podem precisar converter os atritutos em colunas do banco de dados
-     * @param FieldMapTrait $clazz
-     * @param array|string $fields
-     * @return array|string
+     * Compila a cláusula pelos relacionamentos do model.
+     *
+     * @param mixed  $query
+     * @param string $column
+     * @param string $direction
      */
-    private function realColumns($clazz, $fields)
+    public function compileQueryOrderBy($query, $column, $direction = 'ASC')
     {
-        if(method_exists($clazz,'attributesToColumn')) {
-            return $clazz::attributesToColumn($fields);
-        }
-        return $fields;
+        $alias = $this->resolveColumn($query,$column);
+
+        $query->orderBy( $alias, $direction);
     }
+
+    /**
+     * Recebendo uma string que representa um alias de columa curso.nome
+     * retorna esse alias resolvido para o nome da tabela e o nome da column
+     *
+     * @param mixed $query
+     * @param string column
+     *
+     * @return string
+     */
+    private function resolveColumn($query, $column)
+    {
+        $model = $query->getModel();
+        list($relationship, $column) = $this->explodeField($column);
+
+        if(is_null($relationship)) {
+            return $model->getTable() .'.'. $column;
+        } else {
+            $relationship = $model->{ucfirst($relationship)}();
+            $nextQuery = $relationship->getQuery();
+
+            //guarda a consulta inicial
+            if(!isset($this->baseQuery)) {
+                $this->baseQuery = $query;
+            }
+            $this->addJoin($relationship);
+
+            return $this->resolveColumn($nextQuery, $column);
+        }
+    }
+
+    /**
+     * Adiciona um join a consulta
+     * @param Illuminate\Database\Eloquent\Relations $relationship
+     */
+    private function addJoin($relationship)
+    {
+        $table = $relationship->getModel()->getTable();
+        $foreign = $relationship->getQualifiedForeignKeyName();
+        if($relationship instanceof HasOneOrMany) {
+            $other = $relationship->getQualifiedParentKeyName();
+        } else if($relationship instanceof BelongsTo) {
+            $other = $relationship->getQualifiedOwnerKeyName();
+        }
+
+        $this->baseQuery->join($table, $foreign, '=', $other, 'left');
+    }
+
+    /**
+     * Compila a cláusula pelos relacionamentos do model.
+     *
+     * @param mixed  $query
+     * @param string $column
+     * @param string $keyword
+     * @param string $boolean
+     */
+    public function compileQuerySearch($query, $column, $keyword, $boolean = 'or')
+    {
+        list($relationship, $column) = $this->explodeField($column);
+
+        if(is_null($relationship)) {
+            $this->whereClaule($query, $column, $keyword, $boolean);
+        } else {
+            $query->{$boolean . 'WhereHas'}($relationship, function ($query) use ($column, $keyword) {
+                $this->compileQuerySearch($query,$column, $keyword,'');
+            });
+        }
+    }
+
+    /**
+     * Compila a cláusula where de consultas.
+     *
+     * @param mixed  $query
+     * @param string $column
+     * @param string $keyword
+     * @param string $boolean
+     */
+    protected function whereClaule($query,$column,$keyword, $boolean) {
+        $query->{$boolean . 'Where'}($query->getModel()->getTable() . "." . $column, 'LIKE', '%' . $keyword . '%');
+    }
+
+    /**
+     * Quebra a string em relacionamento e coluna
+     *
+     * @param $field string
+     * @return array
+     */
+    protected function explodeField($field) {
+        if (strpos($field, '.') !== false) {
+            return explode('.',$field,2);
+        }
+
+        return [null,$field];
+    }
+
 
     // /**
     //  * O mesmo que create do eloquent https://laravel.com/docs/5.8/eloquent#mass-assignment
@@ -178,7 +239,7 @@ trait GenericRepository
     //  */
     // public function create(array $attributes): Model
     // {
-    //     return $this->getModel()::create($attributes);
+    //     return $this->query->create($attributes);
     // }
 
     // /**
@@ -200,8 +261,7 @@ trait GenericRepository
      */
     private function getPrimaryKey()
     {
-        $clazz = $this->getModel();
-        return (new $clazz)->getKeyName();
+        return $this->query->getModel()->getKeyName();
     }
 
     /**
@@ -211,7 +271,7 @@ trait GenericRepository
      */
     public function create(array $attributes): Model
     {
-        return $this->getModel()::create($attributes);
+        return $this->query->create($attributes);
     }
 
     /**

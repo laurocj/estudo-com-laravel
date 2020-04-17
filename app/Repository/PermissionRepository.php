@@ -2,15 +2,13 @@
 
 namespace App\Repository;
 
-use App\Repository\GenericRepository;
+use App\Repository\BaseRepository;
 use Spatie\Permission\Models\Permission;
 
-class PermissionRepository
+class PermissionRepository extends BaseRepository
 {
-    use GenericRepository;
-
-    public function getModel()
+    public function __construct()
     {
-        return Permission::class;
+        $this->query = Permission::query();
     }
 }

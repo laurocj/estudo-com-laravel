@@ -3,15 +3,13 @@
 namespace App\Repository;
 
 use App\User;
-use App\Repository\GenericRepository;
+use App\Repository\BaseRepository;
 
 
-class UserRepository
+class UserRepository extends BaseRepository
 {
-    use GenericRepository;
-
-    public function getModel()
+    public function __construct()
     {
-        return User::class;
+        $this->query = User::class;
     }
 }

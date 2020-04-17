@@ -168,7 +168,7 @@ class CategoriesController extends CmsController
             return $this->returnIndexStatusNotOk(__('Not found!!'));
         }
 
-        $this->repository->delete($category);
+        $this->repository->delete($id);
 
         return $this->returnIndexStatusOk('Deleted');
     }

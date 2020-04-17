@@ -3,15 +3,12 @@
 namespace App\Repository;
 
 use App\Model\Product;
-use App\Repository\GenericRepository;
+use App\Repository\BaseRepository;
 
-
-class ProductRepository
+class ProductRepository extends BaseRepository
 {
-    use GenericRepository;
-
-    public function getModel()
+    public function __construct()
     {
-        return Product::class;
+        $this->query = Product::query();
     }
 }
