@@ -60,24 +60,22 @@ abstract class BaseRepository
     {
         if (is_null($key)) {
             $key = $this->getPrimaryKey();
-        } else {
-            $key = $key;
         }
 
         $columns = is_array($columns) ? $columns : [$columns];
         $select = $columns;
         $select[] = $key;
-        $query = $this->query->select($select)->whereNotNull($columns);
+        $this->query->select($select)->whereNotNull($columns);
 
         if (is_numeric($limit)) {
-            $query->limit($limit);
+            $this->query->limit($limit);
         }
 
         foreach ($columns as $column) {
-            $query->where($column, '<>', '')->orderBy($column);
+            $this->query->where($column, '<>', '')->orderBy($column);
         }
 
-        $collection = $query
+        $collection = $this->query
             ->get()
             ->mapWithKeys(function ($item) use ($key, $glue, $columns) {
                 return [$item->{$key} => implode($glue, $item->only($columns))];
