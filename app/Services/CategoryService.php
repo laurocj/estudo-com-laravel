@@ -4,6 +4,8 @@ namespace App\Services;
 
 use App\Model\Category;
 use App\Repository\CategoryRepository;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\DB;
 
 class CategoryService
 {
@@ -13,48 +15,120 @@ class CategoryService
      *
      * @var CategoryRepository
      */
-    private $categoryRepository;
+    private $repository;
 
     /**
      * Category Repository
-     * @param CategoryRepository
+     * @param App\Repository\CategoryRepository
      *
-     * @return this
      */
-    public function __construct(CategoryRepository $categoryRepository)
+    public function __construct(CategoryRepository $repository)
     {
-        $this->categoryRepository = $categoryRepository;
+        $this->repository = $repository;
+    }
+
+    /**
+     * Delete a model by its primary key
+     * @param int $id
+     * @return boolean
+     *
+     * @throws ModelNotFoundException|QueryException
+     */
+    public function delete(int $id)
+    {
+        $category = $this->find($id);
+
+        return $this->repository->delete($category);
+    }
+
+    /**
+     * Find a model by its primary key
+     * @param int $id
+     * @return Category
+     *
+     * @throws ModelNotFoundException
+     */
+    public function find(int $id)
+    {
+        $category = $this->repository->find($id);
+
+        if(empty($category)) {
+            throw (new ModelNotFoundException)->setModel(
+                get_class(Category::class), $id
+            );
+        }
+
+        return $category;
+    }
+
+    /**
+     * @param int $itensPerPages
+     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
+     */
+    public function paginate(int $itensPerPages)
+    {
+        return $this->repository->paginate($itensPerPages);
+    }
+
+    /**
+     * @param int $itensPerPages
+     * @param array $search
+     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
+     */
+    public function search(int $itensPerPages, array $search)
+    {
+        return $this->repository->search($itensPerPages,$search);
     }
 
     /**
      * Create Category
-     *
      * @param String $name
      *
      * @return Category
      */
     public function create(String $name)
     {
-        return $this->categoryRepository->create([
-            'name' => $name
-        ]);
+        $category = new Category();
+        $category->name         = $name;
+
+        DB::beginTransaction();
+
+        $isOk = $this->repository->save($category);
+
+        if ($isOk) {
+            DB::commit();
+            return $category;
+        } else {
+            DB::rollBack();
+            return $isOk;
+        }
     }
 
     /**
      * Update Category
-     *
-     * @param Category $category
-     * @param Array $newValue
+     * @param int $id
+     * @param string $name
      *
      * @return boolean
+     *
+     * @throws ModelNotFoundException
      */
-    public function update(Category $category, array $newValue)
+    public function update(int $id, string $name)
     {
-        $attribules = [];
-        foreach ($newValue as $column => $value) {
-            $attribules[$column] = $value;
+        $category = $this->find($id);
+
+        $category->name         = $name;
+
+        DB::beginTransaction();
+
+        $isOk = $this->repository->save($category);
+
+        if ($isOk) {
+            DB::commit();
+        } else {
+            DB::rollBack();
         }
 
-        return $this->categoryRepository->update($category, $attribules);
+        return $isOk;
     }
 }

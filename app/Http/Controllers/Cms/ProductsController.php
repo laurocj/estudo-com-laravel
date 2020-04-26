@@ -5,10 +5,11 @@ namespace App\Http\Controllers\Cms;
 use App\Http\Controllers\Cms\CmsController;
 use App\Http\Requests\ProductsFormRequest;
 use Illuminate\Http\Request;
-use App\Model\Category;
 use App\Repository\CategoryRepository;
-use App\Repository\ProductRepository;
 use App\Services\ProductService;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\QueryException;
+use Illuminate\Support\Str;
 
 class ProductsController extends CmsController
 {
@@ -24,19 +25,19 @@ class ProductsController extends CmsController
     protected $_actionIndex = 'Cms\ProductsController@index';
 
     /**
-     * Repository
+     * Service
      *
-     * @var \App\Repository\ProductRepository $repository
+     * @var \App\Service\ProductService $service
      */
-    private $repository;
+    private $service;
 
     /**
      * Construct
      */
-    function __construct(ProductRepository $repository)
+    function __construct(ProductService $service)
     {
         parent::__construct('product');
-        $this->repository = $repository;
+        $this->service = $service;
     }
 
     /**
@@ -46,8 +47,34 @@ class ProductsController extends CmsController
      */
     public function index(Request $request)
     {
-        $products = $this->repository->paginate($this->_itensPerPages);
+        $this->_itensPerPages = $request->itensPerPages ?? $this->_itensPerPages;
+        if (empty($request->q)) {
+            $products = $this->service
+            ->paginate($this->_itensPerPages)
+            ->appends(['itensPerPages' => $this->_itensPerPages]);
+        } else {
+            $products = $this->search($request);
+        }
+
         return $this->showView(__FUNCTION__, compact('products'));
+    }
+
+    /**
+     * For research
+     * @param Request $request
+     */
+    public function search(Request $request)
+    {
+        if ($request->has('q')) {
+            $search = [];
+            $search['name'] = $request->q;
+            $appends['q'] = $request->q;
+            $appends['itensPerPages'] = $this->_itensPerPages;
+            return $this
+                ->service
+                ->search($appends['itensPerPages'], $search)
+                ->appends($appends);
+        }
     }
 
     /**
@@ -70,12 +97,16 @@ class ProductsController extends CmsController
      */
     public function store(ProductsFormRequest $request, ProductService $service)
     {
-        $product = $service->create(
+        $product = $this->service->create(
             $request->name,
             $request->stock,
             $request->price,
             $request->category_id
         );
+
+        if (empty($product)) {
+            return $this->returnIndexStatusNotOk(__('Error creating'));
+        }
 
         return $this->returnIndexStatusOk($product->name . ' created');
     }
@@ -99,10 +130,14 @@ class ProductsController extends CmsController
      */
     public function edit($id, CategoryRepository $categoryRepository)
     {
-        $product = $this->repository->find($id);
+        try {
 
-        if (empty($product)) {
-            return $this->returnIndexStatusNotOk(__('Not found!!'));
+            $product = $this->service->find($id);
+
+        } catch (\Throwable $th) {
+
+            return $this->returnIndexStatusNotOk(__('Not found !'));
+
         }
 
         $categories = $categoryRepository->lists('name');
@@ -114,24 +149,30 @@ class ProductsController extends CmsController
      * Update the specified resource in storage.
      *
      * @param  App\Http\Requests\ProductsFormRequest  $request
-     * @param  App\Services\ProductService $service
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(ProductsFormRequest $request, ProductService $service, $id)
+    public function update(ProductsFormRequest $request, $id)
     {
-        $product = $this->repository->find($id);
+        try {
 
-        if (empty($product)) {
-            return $this->returnIndexStatusNotOk(__('Not found!!'));
+            if ($this->service->update(
+                    $id,
+                    $request->name,
+                    $request->stock,
+                    $request->price,
+                    $request->category_id
+                )
+            )
+                return $this->returnIndexStatusOk(__('Updated !'));
+
+        } catch (\Throwable $th) {
+
+            if($th instanceof ModelNotFoundException)
+                $error = __('Not found !');
         }
 
-        $service->update(
-            $product,
-            $request->only(['name', 'stock', 'price', 'category_id'])
-        );
-
-        return $this->returnIndexStatusOk('Updated');
+        return $this->returnIndexStatusNotOk($error ?? 'Not updated');
     }
 
     /**
@@ -142,14 +183,21 @@ class ProductsController extends CmsController
      */
     public function destroy($id)
     {
-        $product = $this->repository->find($id);
+        try {
 
-        if (empty($product)) {
-            return $this->returnIndexStatusNotOk(__('Not found!!'));
+            if ($this->service->delete($id)) {
+                return $this->returnIndexStatusOk(__('Deleted !'));
+            }
+
+        } catch (\Throwable $th) {
+
+            if($th instanceof QueryException && Str::is('*Integrity constraint violation*',$th->getMessage()))
+                $error = 'It cannot be deleted, it is in use in another record.';
+
+            if($th instanceof ModelNotFoundException)
+                $error = __('Not found !');
         }
 
-        $this->repository->delete($id);
-
-        return $this->returnIndexStatusOk('Deleted');
+        return $this->returnIndexStatusNotOk($error ?? "Not Deleted !");
     }
 }

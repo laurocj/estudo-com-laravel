@@ -4,7 +4,8 @@ namespace App\Services;
 
 use App\Repository\UserRepository;
 use App\User;
-
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class UserService
@@ -15,77 +16,144 @@ class UserService
      *
      * @var UserRepository
      */
-    private $userRepository;
+    private $repository;
 
     /**
      * User Repository
      * @param UserRepository
      *
-     * @return this
      */
-    public function __construct(UserRepository $userRepository)
+    public function __construct(UserRepository $repository)
     {
-        $this->userRepository = $userRepository;
+        $this->repository = $repository;
     }
 
     /**
-     * Create User
+     * Delete a model by its primary key
+     * @param int $id
+     * @return boolean
      *
-     * @param String $name
-     * @param String $email
-     * @param String $password
-     *
-     * @return User
+     * @throws ModelNotFoundException|QueryException
      */
-    public function create(String $name, String $email, String $password, array $roles = [])
+    public function delete(int $id)
     {
-        $password = $this->encrypt($password);
+        $user = $this->find($id);
 
-        $user = $this->userRepository->create([
-            'name' => $name,
-            'email' => $email,
-            'password' => $password
-        ]);
+        return $this->repository->delete($user);
+    }
 
-        if (!empty($roles)) {
-            $user->assignRole($roles);
+    /**
+     * Find a model by its primary key
+     * @param int $id
+     * @return User
+     *
+     * @throws ModelNotFoundException
+     */
+    public function find(int $id)
+    {
+        $user = $this->repository->find($id);
+
+        if(empty($user)) {
+            throw (new ModelNotFoundException())->setModel(
+                get_class(User::class), $id
+            );
         }
 
         return $user;
     }
 
     /**
-     * Update User
-     *
-     * @param User $user
-     * @param Array $newValue
-     *
-     * @return boolean
+     * @param int $itensPerPages
+     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
      */
-    public function update(User $user, array $newValue, array $roles = [])
+    public function paginate(int $itensPerPages)
     {
-        $attributes  = [];
-        foreach ($newValue as $column => $value) {
-            if ($column == 'password') {
-                $attributes[$column] = $this->encrypt($value);
-            } else {
-                $attributes[$column] = $value;
-            }
-        }
-
-        if (!empty($roles)) {
-            $user->syncRoles($roles);
-        }
-
-        return $this->userRepository->update($user, $attributes);
+        return $this->repository->paginate($itensPerPages);
     }
 
     /**
-     * @param String $user
-     *
-     * @return String
+     * @param int $itensPerPages
+     * @param array $search
+     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
      */
-    private function encrypt(String $password)
+    public function search(int $itensPerPages, array $search)
+    {
+        return $this->repository->search($itensPerPages,$search);
+    }
+
+    /**
+     * Create User
+     *
+     * @param string $name
+     * @param string $email
+     * @param string $password
+     * @param array $roles
+     *
+     * @return User|null
+     */
+    public function create(string $name, string $email, string $password, array $roles = [])
+    {
+        $user = new User();
+        $user->name         = $name;
+        $user->email        = $email;
+        $user->password     = $this->encrypt($password);
+
+        DB::beginTransaction();
+
+        if ($this->repository->save($user)) {
+            if (!empty($roles)) {
+                $user->assignRole($roles);
+            }
+            DB::commit();
+            return $user;
+        }
+        DB::rollBack();
+        return null;
+
+    }
+
+    /**
+     * Update User
+     * @param int $id
+     * @param string $name
+     * @param string $email
+     * @param string $password
+     * @param array $roles
+     *
+     * @return boolean
+     *
+     * @throws ModelNotFoundException
+     */
+    public function update(int $id, string $name, string $email, string $password, array $roles = [])
+    {
+        $user = $this->find($id);
+
+        $user->name         = $name;
+        $user->email        = $email;
+        $user->password     = $this->encrypt($password);
+
+        DB::beginTransaction();
+
+        $isOk = $this->repository->save($user);
+
+        if ($isOk) {
+            if (!empty($roles)) {
+                $user->assignRole($roles);
+            }
+            DB::commit();
+        } else {
+            DB::rollBack();
+        }
+
+        return $isOk;
+    }
+
+    /**
+     * @param string $user
+     *
+     * @return string
+     */
+    private function encrypt(string $password)
     {
         return Hash::make($password);
     }

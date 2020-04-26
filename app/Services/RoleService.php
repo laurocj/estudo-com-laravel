@@ -5,7 +5,7 @@ namespace App\Services;
 use App\Repository\RoleRepository;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\DB;
-use App\Services\PaginatedAbstract;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class RoleService
 {
@@ -15,17 +15,68 @@ class RoleService
      *
      * @var RoleRepository
      */
-    private $roleRepository;
+    private $repository;
 
     /**
      * Role Repository
      * @param RoleRepository
-     *
-     * @return this
      */
-    public function __construct(RoleRepository $roleRepository)
+    public function __construct(RoleRepository $repository)
     {
-        $this->roleRepository = $roleRepository;
+        $this->repository = $repository;
+    }
+
+    /**
+     * Delete a model by its primary key
+     * @param int $id
+     * @return boolean
+     *
+     * @throws ModelNotFoundException|QueryException
+     */
+    public function delete(int $id)
+    {
+        $role = $this->find($id);
+
+        return $this->repository->delete($role);
+    }
+
+    /**
+     * Find a model by its primary key
+     * @param int $id
+     * @return Role
+     *
+     * @throws ModelNotFoundException
+     */
+    public function find(int $id)
+    {
+        $role = $this->repository->find($id);
+
+        if(empty($role)) {
+            throw (new ModelNotFoundException())->setModel(
+                get_class(Role::class), $id
+            );
+        }
+
+        return $role;
+    }
+
+    /**
+     * @param int $itensPerPages
+     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
+     */
+    public function paginate(int $itensPerPages)
+    {
+        return $this->repository->paginate($itensPerPages);
+    }
+
+    /**
+     * @param int $itensPerPages
+     * @param array $search
+     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
+     */
+    public function search(int $itensPerPages, array $search)
+    {
+        return $this->repository->search($itensPerPages,$search);
     }
 
     /**
@@ -34,52 +85,51 @@ class RoleService
      * @param String $name
      * @param Array $permissions
      *
-     * @return Role
+     * @return Role|null
      */
     public function create(String $name, array $permissions)
     {
-        // Forma com function
-        // $role = null;
-        // DB::transaction(function() use (&$role ,$name ,$permissions) {
-        //     $role = Role::create(['name' => $name]);
-        //     $role->syncPermissions($permissions);
-        // });
+        $role = new Role();
+        $role->name         = $name;
 
-        // DB::beginTransaction();
-        $role = $this->roleRepository->create(['name' => $name]);
-        $role->syncPermissions($permissions);
-        // DB::commint();
+        DB::beginTransaction();
 
-        return $role;
+        if ($this->repository->save($role)) {
+            $role->syncPermissions($permissions);
+            DB::commit();
+            return $role;
+        }
+        DB::rollBack();
+        return null;
     }
 
     /**
      * Update Role
-     *
-     * @param Role $role
-     * @param Array $newValue
-     * @param Array $permissions
+     * @param int $id
+     * @param string $name
+     * @param array $permissions
      *
      * @return boolean
+     *
+     * @throws ModelNotFoundException
      */
-    public function update(Role $role, array $newValue, array $permissions = [])
+    public function update(int $id, string $name, array $permissions)
     {
-        $attributes = [];
-        foreach ($newValue as $column => $value) {
-            if (!is_numeric($column)) {
-                if (is_array($value) && $column == 'permissions') {
-                    $permissions = array_merge($permissions, $value);
-                } else
-                if (is_string($column) && !is_array($value)) {
-                    $attributes[$column] = $value;
-                }
-            }
-        }
+        $role = $this->find($id);
 
-        if (!empty($permissions)) {
+        $role->name         = $name;
+
+        DB::beginTransaction();
+
+        $isOk = $this->repository->save($role);
+
+        if ($isOk) {
             $role->syncPermissions($permissions);
+            DB::commit();
+        } else {
+            DB::rollBack();
         }
 
-        return $this->roleRepository->update($role, $attributes);
+        return $isOk;
     }
 }

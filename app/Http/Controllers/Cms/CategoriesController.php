@@ -7,8 +7,11 @@ use App\Http\Requests\CategoriesFormRequest;
 
 use Illuminate\Http\Request;
 
-use App\Repository\CategoryRepository;
+use Illuminate\Support\Str;
+
 use App\Services\CategoryService;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\QueryException;
 
 class CategoriesController extends CmsController
 {
@@ -24,19 +27,19 @@ class CategoriesController extends CmsController
     protected $_actionIndex = 'Cms\CategoriesController@index';
 
     /**
-     * Repository
+     * Service
      *
-     * @var \App\Repository\CategoryRepository $repository
+     * @var App\Services\CategoryService $service
      */
-    private $repository;
+    private $service;
 
     /**
      * Construct
      */
-    function __construct(CategoryRepository $repository)
+    function __construct(CategoryService $service)
     {
         parent::__construct('category');
-        $this->repository = $repository;
+        $this->service = $service;
     }
 
     /**
@@ -48,7 +51,7 @@ class CategoriesController extends CmsController
     {
         $this->_itensPerPages = $request->itensPerPages ?? $this->_itensPerPages;
         if (empty($request->q)) {
-            $categories = $this->repository
+            $categories = $this->service
             ->paginate($this->_itensPerPages)
             ->appends(['itensPerPages' => $this->_itensPerPages]);
         } else {
@@ -59,7 +62,7 @@ class CategoriesController extends CmsController
     }
 
     /**
-     * Para pesquisa
+     * For research
      * @param Request $request
      */
     public function search(Request $request)
@@ -69,8 +72,10 @@ class CategoriesController extends CmsController
             $search['name'] = $request->q;
             $appends['q'] = $request->q;
             $appends['itensPerPages'] = $this->_itensPerPages;
-            return $this->repository->search($request->itensPerPages ?? $this->_itensPerPages, $search)
-            ->appends($appends);
+            return $this
+                ->service
+                ->search($appends['itensPerPages'], $search)
+                ->appends($appends);
         }
     }
 
@@ -88,12 +93,11 @@ class CategoriesController extends CmsController
      * Store a newly created resource in storage.
      *
      * @param  App\Http\Requests\CategoriesFormRequest  $request
-     * @param  App\Services\CategoryService $service
      * @return \Illuminate\Http\Response
      */
-    public function store(CategoriesFormRequest $request, CategoryService $service)
+    public function store(CategoriesFormRequest $request)
     {
-        $category = $service->create($request->name);
+        $category = $this->service->create($request->name);
 
         if (empty($category)) {
             return $this->returnIndexStatusNotOk(__('Error creating'));
@@ -121,10 +125,14 @@ class CategoriesController extends CmsController
      */
     public function edit($id)
     {
-        $category = $this->repository->find($id);
+        try {
 
-        if (empty($category)) {
-            return $this->returnIndexStatusNotOk(__('Not found!!'));
+            $category = $this->service->find($id);
+
+        } catch (\Throwable $th) {
+
+            return $this->returnIndexStatusNotOk(__('Not found !'));
+
         }
 
         return $this->showView(__FUNCTION__, compact('category'));
@@ -134,24 +142,27 @@ class CategoriesController extends CmsController
      * Update the specified resource in storage.
      *
      * @param  App\Http\Requests\CategoriesFormRequest  $request
-     * @param  App\Services\CategoryService $service
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(CategoriesFormRequest $request, CategoryService $service, $id)
+    public function update(CategoriesFormRequest $request, $id)
     {
-        $category = $this->repository->find($id);
+        try {
 
-        if (empty($category)) {
-            return $this->returnIndexStatusNotOk(__('Not found!!'));
+            if ($this->service->update(
+                    $id,
+                    $request->input('name')
+                )
+            )
+                return $this->returnIndexStatusOk(__('Updated !'));
+
+        } catch (\Throwable $th) {
+
+            if($th instanceof ModelNotFoundException)
+                $error = __('Not found !');
         }
 
-        $service->update(
-            $category,
-            ['name' => $request->input('name')]
-        );
-
-        return $this->returnIndexStatusOk('Updated');
+        return $this->returnIndexStatusNotOk($error ?? 'Not updated');
     }
 
     /**
@@ -162,14 +173,21 @@ class CategoriesController extends CmsController
      */
     public function destroy($id)
     {
-        $category = $this->repository->find($id);
+        try {
 
-        if (empty($category)) {
-            return $this->returnIndexStatusNotOk(__('Not found!!'));
+            if ($this->service->delete($id)) {
+                return $this->returnIndexStatusOk(__('Deleted !'));
+            }
+
+        } catch (\Throwable $th) {
+
+            if($th instanceof QueryException && Str::is('*Integrity constraint violation*',$th->getMessage()))
+                $error = 'It cannot be deleted, it is in use in another record.';
+
+            if($th instanceof ModelNotFoundException)
+                $error = __('Not found !');
         }
 
-        $this->repository->delete($id);
-
-        return $this->returnIndexStatusOk('Deleted');
+        return $this->returnIndexStatusNotOk($error ?? "Not Deleted !");
     }
 }

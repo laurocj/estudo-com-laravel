@@ -18,8 +18,6 @@ class DashboardController extends CmsController
      */
     protected $_actionIndex = 'Cms\DashboardController@index';
 
-
-
     /**
      * Construct
      */

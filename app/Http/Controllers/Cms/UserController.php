@@ -7,12 +7,10 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Cms\CmsController;
 use App\Http\Requests\UsersFormRequest;
 use App\Repository\RoleRepository;
-use App\Repository\UserRepository;
 use App\Services\UserService;
-use App\User;
-use Spatie\Permission\Models\Role;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\QueryException;
+use Illuminate\Support\Str;
 
 
 class UserController extends CmsController
@@ -29,21 +27,19 @@ class UserController extends CmsController
     protected $_actionIndex = 'Cms\UserController@index';
 
     /**
-     * Repository
+     * Service
      *
-     * @var \App\Repository\UserRepository $repository
+     * @var \App\Service\UserService $service
      */
-    private $repository;
-
-
+    private $service;
 
     /**
      * Construct
      */
-    function __construct(UserRepository $repository)
+    function __construct(UserService $service)
     {
         parent::__construct('user');
-        $this->repository = $repository;
+        $this->service = $service;
     }
 
     /**
@@ -53,8 +49,33 @@ class UserController extends CmsController
      */
     public function index(Request $request)
     {
-        $users = $this->repository->paginate($this->_itensPerPages);
+        $this->_itensPerPages = $request->itensPerPages ?? $this->_itensPerPages;
+        if (empty($request->q)) {
+            $users = $this->service
+            ->paginate($this->_itensPerPages)
+            ->appends(['itensPerPages' => $this->_itensPerPages]);
+        } else {
+            $users = $this->search($request);
+        }
         return $this->showView(__FUNCTION__, compact('users'));
+    }
+
+    /**
+     * For research
+     * @param Request $request
+     */
+    public function search(Request $request)
+    {
+        if ($request->has('q')) {
+            $search = [];
+            $search['name'] = $request->q;
+            $appends['q'] = $request->q;
+            $appends['itensPerPages'] = $this->_itensPerPages;
+            return $this
+                ->service
+                ->search($appends['itensPerPages'], $search)
+                ->appends($appends);
+        }
     }
 
     /**
@@ -72,17 +93,20 @@ class UserController extends CmsController
      * Store a newly created resource in storage.
      *
      * @param  App\Http\Requests\UsersFormRequest  $request
-     * @param  App\Services\UserService $service
      * @return \Illuminate\Http\Response
      */
-    public function store(UsersFormRequest $request, UserService $service)
+    public function store(UsersFormRequest $request)
     {
-        $user = $service->create(
+        $user = $this->service->create(
             $request->name,
             $request->email,
             $request->password,
             $request->roles
         );
+
+        if (empty($user)) {
+            return $this->returnIndexStatusNotOk(__('Error creating'));
+        }
 
         return $this->returnIndexStatusOk('User created successfully');
     }
@@ -95,7 +119,15 @@ class UserController extends CmsController
      */
     public function show($id)
     {
-        $user = $this->repository->find($id);
+        try {
+
+            $user = $this->service->find($id);
+
+        } catch (\Throwable $th) {
+
+            return $this->returnIndexStatusNotOk(__('Not found !'));
+
+        }
         return $this->showView(__FUNCTION__, compact('user'));
     }
 
@@ -107,10 +139,14 @@ class UserController extends CmsController
      */
     public function edit($id, RoleRepository $roleRepository)
     {
-        $user = $this->repository->find($id);
+        try {
 
-        if (empty($user)) {
-            return $this->returnIndexStatusNotOk(__('Not found!!'));
+            $user = $this->service->find($id);
+
+        } catch (\Throwable $th) {
+
+            return $this->returnIndexStatusNotOk(__('Not found !'));
+
         }
 
         $roles = $roleRepository->lists('name', 'name');
@@ -124,25 +160,30 @@ class UserController extends CmsController
      * Update the specified resource in storage.
      *
      * @param  App\Http\Requests\UsersFormRequest  $request
-     * @param  App\Services\UserService $service
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(UsersFormRequest $request, UserService $service, $id)
+    public function update(UsersFormRequest $request, $id)
     {
-        $user = $this->repository->find($id);
+        try {
 
-        if (empty($user)) {
-            return $this->returnIndexStatusNotOk(__('Not found!!'));
+            if ($this->service->update(
+                    $id,
+                    $request->name,
+                    $request->email,
+                    $request->password,
+                    $request->roles
+                )
+            )
+                return $this->returnIndexStatusOk(__('Updated !'));
+
+        } catch (\Throwable $th) {
+
+            if($th instanceof ModelNotFoundException)
+                $error = __('Not found !');
         }
 
-        $service->update(
-            $user,
-            $request->only(['name', 'email', 'password']),
-            $request->input('roles')
-        );
-
-        return $this->returnIndexStatusOk('User updated successfully');
+        return $this->returnIndexStatusNotOk($error ?? 'Not updated');
     }
 
     /**
@@ -153,14 +194,21 @@ class UserController extends CmsController
      */
     public function destroy($id)
     {
-        $user = $this->repository->find($id);
+        try {
 
-        if (empty($user)) {
-            return $this->returnIndexStatusNotOk(__('Not found!'));
+            if ($this->service->delete($id)) {
+                return $this->returnIndexStatusOk(__('Deleted !'));
+            }
+
+        } catch (\Throwable $th) {
+
+            if($th instanceof QueryException && Str::is('*Integrity constraint violation*',$th->getMessage()))
+                $error = 'It cannot be deleted, it is in use in another record.';
+
+            if($th instanceof ModelNotFoundException)
+                $error = __('Not found !');
         }
 
-        $this->repository->delete($id);
-
-        return $this->returnIndexStatusOk('User deleted successfully');
+        return $this->returnIndexStatusNotOk($error ?? "Not Deleted !");
     }
 }

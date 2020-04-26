@@ -26,7 +26,7 @@ class CmsController extends BaseController
     /**
      * Number of itens per pages
      */
-    protected $_itensPerPages = 5;
+    protected $_itensPerPages = 2;
 
     /**
      * Layout default

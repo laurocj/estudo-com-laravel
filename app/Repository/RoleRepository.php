@@ -7,7 +7,6 @@ use Spatie\Permission\Models\Role;
 
 class RoleRepository extends BaseRepository
 {
-
     public function __construct()
     {
         $this->query = Role::query();

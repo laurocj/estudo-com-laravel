@@ -11,6 +11,11 @@ abstract class BaseRepository
 {
 
     /**
+     * @var \Illuminate\Database\Eloquent\Builder
+     */
+    public $query;
+
+    /**
      * O mesmo que all do eloquent https://laravel.com/docs/5.8/eloquent#retrieving-models
      *
      * @param Array $columns
@@ -24,15 +29,13 @@ abstract class BaseRepository
     }
 
     /**
-     * O mesmo que o delete do eloquent https://laravel.com/docs/5.8/eloquent#deleting-models
-     *
-     * @param int $id
+     * @param \Illuminate\Database\Eloquent\Model $model
      *
      * @return boolean
      */
-    public function delete(int $id): bool
+    public function delete(Model $model): bool
     {
-        return $this->find($id)->delete();
+        return $model->delete();
     }
 
     /**
@@ -228,29 +231,16 @@ abstract class BaseRepository
         return [null,$field];
     }
 
-
-    // /**
-    //  * O mesmo que create do eloquent https://laravel.com/docs/5.8/eloquent#mass-assignment
-    //  * @param Array $attributes
-    //  *
-    //  * @return \Illuminate\Database\Eloquent\Model
-    //  */
-    // public function create(array $attributes): Model
-    // {
-    //     return $this->query->create($attributes);
-    // }
-
-    // /**
-    //  *  O mesmo que update https://laravel.com/docs/5.8/eloquent#updates
-    //  * @param int $id
-    //  * @param Array $attributes
-    //  *
-    //  * @return boolean
-    //  */
-    // public function update(int $id, array $attributes): bool
-    // {
-    //     return $this->find($id)->update($attributes);
-    // }
+    /**
+     * @param \Illuminate\Database\Eloquent\Model $model
+     * @param Array $attributes
+     *
+     * @return boolean
+     */
+    public function save(Model &$model): bool
+    {
+        return $model->save();
+    }
 
     /**
      * Obtem a string que correponde a primary key da tabela
@@ -260,26 +250,5 @@ abstract class BaseRepository
     private function getPrimaryKey()
     {
         return $this->query->getModel()->getKeyName();
-    }
-
-    /**
-     * @param Array $attributes
-     *
-     * @return \Illuminate\Database\Eloquent\Model
-     */
-    public function create(array $attributes): Model
-    {
-        return $this->query->create($attributes);
-    }
-
-    /**
-     * @param \Illuminate\Database\Eloquent\Model $model
-     * @param Array $attributes
-     *
-     * @return boolean
-     */
-    public function update(Model $model, array $attributes): bool
-    {
-        return $model->update($attributes);
     }
 }
