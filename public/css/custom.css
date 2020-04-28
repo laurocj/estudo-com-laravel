@@ -10,6 +10,23 @@ body{
     height: 94vh;
 }
 
+main {
+    overflow-y: auto;
+    height: calc(100vh - 56px)
+}
+
+main .pagination{
+    margin-bottom: 0;
+}
+
 main table thead tr th:nth-last-child(1) {
     width: 25% !important;
+}
+
+.input-group-append .material-icons {
+    line-height: 0.8em;
+}
+
+.navmenu {
+    height: calc(100vh - 56px)
 }

@@ -1,14 +1,13 @@
 @extends($layout)
 
 @section('content')
-<div class="row h-100">
-    <div class="col-12">
-
-        @component('cms.layouts.component.alert')
-        @endcomponent
-
+<div class="card h-10">
+    <div class="card-header">
         <div class="row">
-            <div class="col-sm-12 col-md-4">
+            <div class="col-sm-12 col-md">
+                <h1 class="h2 mb-0">{{__('Categories')}}</h1>
+            </div>
+            <div class="col-sm-12 col-md-3">
                 <div class="form-group row my-0">
                     <label class="col-sm-auto col-form-label py-1 pr-0">Mostrando</label>
                     <form class="col-sm-auto pl-1">
@@ -36,18 +35,21 @@
                         <input type="text" class="form-control form-control-sm small" name="q" value="{{Request::get('q')}}" placeholder="Buscar...">
                         <div class="input-group-append">
                             <button class="btn btn-primary btn-sm" type="submit">
-                                <i class="fas fa-search fa-sm"></i>
+                                <span class="material-icons">search</span>
                             </button>
                         </div>
                     </div>
                 </form>
             </div>
+
             <div class="col-sm-12 col-md-auto">
                 @can('category-create')
-                    <a href="{{ route('categorias.create') }}" class="btn btn-outline-success">{{__('New')}}</a>
+                    <a href="{{ route('categorias.create') }}" class="btn btn-primary">{{__('New')}}</a>
                 @endcan
             </div>
         </div>
+    </div>
+    <div class="card-body">
         <div class="table-responsive mt-3">
             <table class="table table-bordered table-striped">
                 <thead>
@@ -65,8 +67,8 @@
                         <td>
                             <a href="{{route('categorias.edit',$category->id)}}" class='btn btn-primary btn-sm'>Edit</a>
 
-                            <a data-toggle="modal" data-load-url="{{route('categorias.edit',$category->id)}}"
-                                data-target="#modalContent" href="#" class='btn btn-dark btn-sm'>Edit - modal</a>
+                            {{-- <a data-toggle="modal" data-load-url="{{route('categorias.edit',$category->id)}}"
+                                data-target="#modalContent" href="#" class='btn btn-dark btn-sm'>Edit - modal</a> --}}
 
 
                             {!! Form::open(array('route' => ['categorias.destroy',$category->id],'method' =>
@@ -79,14 +81,14 @@
                 </tbody>
             </table>
         </div>
+    </div>
+    <div class="card-footer">
         <div class="row">
             <div class="col-sm-12 col-md-5">
 
             </div>
-            <div class="col-sm-12 col-md-7">
-                <div class="d-flex justify-content-center">
-                    {!! $categories->links() !!}
-                </div>
+            <div class="col-sm-12 col-md-7 d-flex justify-content-center">
+                {!! $categories->links() !!}
             </div>
         </div>
     </div>

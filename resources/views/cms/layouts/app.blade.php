@@ -7,15 +7,17 @@
 
     @include('cms.layouts.navbar')
 
-    <div class="container-fluid h-100">
+    <div class="container-fluid">
 
-        <div class="row h-100">
+        <div class="row">
 
-            <nav class='d-none d-sm-block col-sm-4 col-md-3 col-xl-2 border bg-light'>
+            <nav class='navmenu d-none d-sm-block col-sm-4 col-md-3 col-xl-2 border bg-light'>
                 @include('cms.layouts.menu')
             </nav>
 
             <main class="col-12 col-sm pt-3">
+                @component('cms.layouts.component.alert')
+                @endcomponent
                 @yield('content')
             </main>
 
