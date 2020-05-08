@@ -1,29 +1,25 @@
-<ul class="nav flex-column">
+<nav class="nav nav-tabs flex-column" role="tablist" aria-orientation="vertical">
     @can('category-list')
-    <li class="nav-item">
         <a class="nav-link {{ Route::is('categorias.*') ? 'active' : '' }}"
+            aria-selected="{{ Route::is('categorias.*') ? 'true' : 'false' }}"
             href="{{ route('categorias.index') }}">{{ __('Categories') }}</a>
-    </li>
     @endcan
 
     @can('product-list')
-    <li class="nav-item">
         <a class="nav-link {{ Route::is('produtos.*') ? 'active' : '' }}"
+            aria-selected="{{ Route::is('produtos.*') ? 'true' : 'false' }}"
             href="{{ route('produtos.index') }}">{{ __('Products') }}</a>
-    </li>
     @endcan
 
     @can('role-list')
-    <li class="nav-item">
         <a class="nav-link {{ Route::is('regras.*') ? 'active' : '' }}"
+            aria-selected="{{ Route::is('regras.*') ? 'true' : 'false' }}"
             href="{{ route('regras.index') }}">{{ __('Roles') }}</a>
-    </li>
     @endcan
 
     @can('user-list')
-    <li class="nav-item">
         <a class="nav-link {{ Route::is('usuarios.*') ? 'active' : '' }}"
+            aria-selected="{{ Route::is('usuarios.*') ? 'true' : 'false' }}"
             href="{{ route('usuarios.index') }}">{{ __('Users') }}</a>
-    </li>
     @endcan
-</ul>
+</nav>

@@ -1,14 +1,15 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-
-@include('layouts.head')
+    <head>
+        @include('layouts.head')
+    </head>
     <body>
-            @include('layouts.navbar')
+        @include('layouts.navbar')
 
-            <main class="py-4">
-                @yield('content')
-            </main>
+        <main class="py-4">
+            @yield('content')
+        </main>
 
-            @include('layouts.js')
+        @include('layouts.js')
     </body>
 </html>

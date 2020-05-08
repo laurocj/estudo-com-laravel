@@ -1,25 +1,28 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+    <head>
+        @include('cms.layouts.head')
+    </head>
 
-@include('cms.layouts.head')
-
-<body>
-
-    @include('cms.layouts.navbar')
-
-    <div class="container-fluid">
-
+    <body class="container-fluid">
         <div class="row">
-
-            <nav class='navmenu d-none d-sm-block col-sm-4 col-md-3 col-xl-2 border bg-light'>
+            <section class='d-none col-12 d-md-block col-md-3 col-xl-2 border-right bg-light'>
+                <aside class="row navbar navbar-dark bg-dark">
+                    <a class="navbar-brand" href="{{ url('/') }}">
+                        {{ config('app.name') }}
+                    </a>
+                </aside>
                 @include('cms.layouts.menu')
-            </nav>
+            </section>
 
-            <main class="col-12 col-sm pt-3">
-                @component('cms.layouts.component.alert')
-                @endcomponent
-                @yield('content')
-            </main>
+            <section class="col-12 col-sm">
+                @include('cms.layouts.navbar')
+                <main class="row">
+                    @component('cms.layouts.component.alert')
+                    @endcomponent
+                    @yield('content')
+                </main>
+            </section>
 
             <div class="modal fade" id="modalContent" tabindex="-1" role="dialog" aria-hidden="true">
                 <div class="modal-dialog modal-lg">
@@ -29,13 +32,12 @@
                     </div>
                 </div>
             </div>
-
         </div>
 
-    </div>
+        @include('cms.layouts.footer')
 
-    @include('cms.layouts.js')
+        @include('cms.layouts.js')
 
-</body>
+    </body>
 
 </html>
