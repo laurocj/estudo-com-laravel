@@ -17,5 +17,5 @@ main table thead tr th:nth-last-child(1) {
 }
 
 .input-group-append .material-icons {
-    line-height: 0.8em;
+    line-height: 58%;
 }

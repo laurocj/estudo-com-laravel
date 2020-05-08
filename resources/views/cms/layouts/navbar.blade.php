@@ -1,35 +1,10 @@
-<nav class="navbar navbar-expand-md navbar-light bg-light shadow-sm row sticky-top">
+<nav class="navbar navbar-expand-md navbar-light bg-light shadow-1 row sticky-top">
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
         aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
         <span class="navbar-toggler-icon"></span>
     </button>
 
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <!-- Left Side Of Navbar -->
-        {{-- <ul class="navbar-nav mr-auto">
-                <li class="nav-item">
-                    <a class="nav-link {{ Route::is('categorias.*') ? 'active' : '' }}"
-        href="{{ route('categorias.index') }}">{{ __('Categories') }}</a>
-        </li>
-
-        <li class="nav-item">
-            <a class="nav-link {{ Route::is('produtos.*') ? 'active' : '' }}"
-                href="{{ route('produtos.index') }}">{{ __('Products') }}</a>
-        </li>
-
-        @can('role-list')
-        <li class="nav-item">
-            <a class="nav-link {{ Route::is('regras.*') ? 'active' : '' }}"
-                href="{{ route('regras.index') }}">{{ __('Roles') }}</a>
-        </li>
-        @endcan
-
-        <li class="nav-item">
-            <a class="nav-link {{ Route::is('usuarios.*') ? 'active' : '' }}"
-                href="{{ route('usuarios.index') }}">{{ __('Users') }}</a>
-        </li>
-
-        </ul> --}}
+    <div class="" >
 
         <!-- Right Side Of Navbar -->
         <ul class="navbar-nav ml-auto">

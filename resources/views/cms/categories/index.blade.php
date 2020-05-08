@@ -3,20 +3,20 @@
 @section('content')
     @tableIndex([
         'title' => 'Categories',
-        'routeNew' => route('categorias.create'),
-        'source' => $categories
+        'routeNew' => Auth::user()->can('category-create') ? route('categorias.create') : null,
+        'source' =>  $categories
     ])
         @slot('thead')
             <tr>
-                <th>Id</th>
-                <th>Title</th>
-                <th>Action</th>
+                <th scope="col">Id</th>
+                <th scope="col">Title</th>
+                <th scope="col">Action</th>
             </tr>
         @endslot
         @slot('tbody')
             @foreach($categories as $category)
             <tr>
-                <td>{{$category->id}}</td>
+                <th scope="row">{{$category->id}}</th>
                 <td>{{$category->name}}</td>
                 <td>
                     <a href="{{route('categorias.edit',$category->id)}}" class='btn btn-primary btn-sm'>Edit</a>

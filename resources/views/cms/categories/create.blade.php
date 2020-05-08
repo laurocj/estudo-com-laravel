@@ -1,14 +1,20 @@
 @extends($layout)
 
 @section('content')
-<div class="col-12">
-    <div class="pt-4 pb-2 border-bottom">
-        <h1 class="h2">{{__('New Category')}}</h1>
+{!! Form::open(array('route' => 'categorias.store','class'=>'card')) !!}
+    <div class="card-header">
+        <div class="row">
+            <div class="col-sm-12 col-md">
+                <h1 class="h2 mb-0">{{__('New Category')}}</h1>
+            </div>
+            <div class="col-sm-12 col-md-auto pt-2">
+                {!! Form::submit('Save', array( 'class'=>'btn btn-sm btn-danger' )) !!}
+                <a class="btn btn-sm btn-primary" href="{{ route('categorias.index') }}"> Back</a>
+            </div>
+        </div>
     </div>
-</div>
 
-<div class="col-12 col-sm-9 mx-auto mt-4">
-    {!! Form::open(array('route' => 'categorias.store')) !!}
+    <div class="card-body">
         <div class="form-group">
             {!! Form::label('name', __('Title:')) !!}
             {!! Form::text('name', null, ['class'=> classValidOrInvalidForInput('name',$errors)]) !!}
@@ -20,11 +26,6 @@
                 @endif
             </div>
         </div>
-
-        <div class="form-group text-right">
-            {!! Form::submit('Save', array( 'class'=>'btn btn-danger' )) !!}
-            <a class="btn btn-primary" href="{{ route('categorias.index') }}"> Back</a>
-        </div>
-    {!! Form::close() !!}
-</div>
+    </div>
+{!! Form::close() !!}
 @endsection

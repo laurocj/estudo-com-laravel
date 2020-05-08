@@ -6,23 +6,25 @@
 
     <body class="container-fluid">
         <div class="row">
-            <section class='d-none col-12 d-md-block col-md-3 col-xl-2 border-right bg-light'>
-                <aside class="row navbar navbar-dark bg-dark">
+            <div class='col-12 col-sm-4 col-md-3 col-xl-2 bg-dark navbar-collapse' id="navbarSupportedContent">
+                <div class="row navbar bg-light">
                     <a class="navbar-brand" href="{{ url('/') }}">
                         {{ config('app.name') }}
                     </a>
-                </aside>
+                </div>
                 @include('cms.layouts.menu')
-            </section>
+            </div>
 
-            <section class="col-12 col-sm">
+            <div class="col">
                 @include('cms.layouts.navbar')
-                <main class="row">
+                <div class="row">
                     @component('cms.layouts.component.alert')
                     @endcomponent
-                    @yield('content')
-                </main>
-            </section>
+                    <main class="col-12 pt-3">
+                        @yield('content')
+                    </main>
+                </div>
+            </div>
 
             <div class="modal fade" id="modalContent" tabindex="-1" role="dialog" aria-hidden="true">
                 <div class="modal-dialog modal-lg">
