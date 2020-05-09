@@ -39,10 +39,10 @@ class CmsController extends BaseController
      */
     function __construct($modelPermission)
     {
-        $this->middleware("permission:$modelPermission-list|$modelPermission-create|$modelPermission-edit|$modelPermission-delet", ['only' => ['index', 'store']]);
-        $this->middleware("permission:$modelPermission-create", ['only' => ['create', 'store']]);
-        $this->middleware("permission:$modelPermission-edit", ['only' => ['edit', 'update']]);
-        $this->middleware("permission:$modelPermission-delete", ['only' => ['destroy']]);
+        // $this->middleware("permission:$modelPermission-list|$modelPermission-create|$modelPermission-edit|$modelPermission-delet", ['only' => ['index', 'store']]);
+        // $this->middleware("permission:$modelPermission-create", ['only' => ['create', 'store']]);
+        // $this->middleware("permission:$modelPermission-edit", ['only' => ['edit', 'update']]);
+        // $this->middleware("permission:$modelPermission-delete", ['only' => ['destroy']]);
     }
 
     /**

@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\View\Components\TableIndex;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 
@@ -30,6 +31,6 @@ class AppServiceProvider extends ServiceProvider
 
     private function loadBladeComponet()
     {
-        Blade::component('cms.layouts.component.table-index', 'tableIndex');
+        Blade::component('table-index', TableIndex::class);
     }
 }

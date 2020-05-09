@@ -1,19 +1,15 @@
 @extends($layout)
 
 @section('content')
-    @tableIndex([
-        'title' => 'Categories',
-        'routeNew' => Auth::user()->can('category-create') ? route('categorias.create') : null,
-        'source' =>  $categories
-    ])
-        @slot('thead')
+    <x-table-index title="Categories" :routeNew="route('categorias.create')" :source="$categories">
+        <x-slot name="thead">
             <tr>
                 <th scope="col">Id</th>
                 <th scope="col">Title</th>
                 <th scope="col">Action</th>
             </tr>
-        @endslot
-        @slot('tbody')
+        </x-slot>
+        <x-slot name="tbody">
             @foreach($categories as $category)
             <tr>
                 <th scope="row">{{$category->id}}</th>
@@ -31,6 +27,6 @@
                 </td>
             </tr>
             @endforeach
-        @endslot
-    @endtableIndex
+        </x-slot>
+    </x-table-index>
 @endsection

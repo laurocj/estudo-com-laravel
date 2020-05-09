@@ -1,6 +1,4 @@
-@import url(https://fonts.googleapis.com/css?family=Nunito);
-@import url(https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,500,500i,700,700i|Roboto+Mono:300,400,700|Roboto+Slab:300,400,700);
-@charset "UTF-8";
+@import url(https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,500,500i,700,700i|Roboto+Mono:300,400,700|Roboto+Slab:300,400,700);@charset "UTF-8";
 
 :root {
   --breakpoint-xs: 0;
@@ -52,7 +50,7 @@
   --light-dark: #e0e0e0;
   --light-light: #fafafa;
   --font-family-monospace: "Roboto Mono", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-  --font-family-sans-serif: "Nunito", sans-serif;
+  --font-family-sans-serif: Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
   --font-family-serif: "Roboto Slab", Georgia, "Times New Roman", Times, serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 }
 
@@ -82,14 +80,14 @@ section {
 body {
   text-align: left;
   text-align: start;
-  background-color: #f8fafc;
+  background-color: white;
   color: rgba(0, 0, 0, 0.87);
-  font-family: "Nunito", sans-serif;
-  font-size: 0.9rem;
+  font-family: Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  font-size: 0.875rem;
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
   font-weight: 400;
-  line-height: 1.6;
+  line-height: 1.428572;
   margin: 0;
 }
 
@@ -201,7 +199,7 @@ input[type=time] {
 }
 
 label {
-  font-size: 0.7714287rem;
+  font-size: 0.750000125rem;
   font-weight: 400;
   letter-spacing: 0;
   line-height: 1.5;
@@ -210,7 +208,7 @@ label {
 }
 
 legend {
-  font-size: 1.5428574rem;
+  font-size: 1.50000025rem;
   font-weight: 400;
   letter-spacing: 0;
   line-height: 1.333334;
@@ -316,14 +314,14 @@ template {
 caption {
   text-align: left;
   text-align: start;
-  font-size: 0.7714287rem;
+  font-size: 0.750000125rem;
   font-weight: 400;
   letter-spacing: 0;
   line-height: 1.5;
   caption-side: bottom;
   color: rgba(0, 0, 0, 0.38);
   min-height: 3.5rem;
-  padding: 1.15rem 1.5rem;
+  padding: 1.2142855rem 1.5rem;
 }
 
 [dir=rtl] caption {
@@ -1475,7 +1473,7 @@ sup {
 }
 
 .blockquote {
-  font-size: 1.2857139rem;
+  font-size: 1.249999625rem;
   font-weight: 500;
   letter-spacing: 0.02em;
   line-height: 1.4;
@@ -1485,7 +1483,7 @@ sup {
 }
 
 .blockquote-footer {
-  font-size: 0.7714287rem;
+  font-size: 0.750000125rem;
   font-weight: 400;
   letter-spacing: 0;
   line-height: 1.5;
@@ -1517,70 +1515,70 @@ small,
 }
 
 .typography-display-4 {
-  font-size: 7.2rem;
+  font-size: 7rem;
   font-weight: 300;
   letter-spacing: -0.04em;
   line-height: 1;
 }
 
 .typography-display-3 {
-  font-size: 3.6rem;
+  font-size: 3.5rem;
   font-weight: 400;
   letter-spacing: -0.02em;
   line-height: 1.035715;
 }
 
 .typography-display-2 {
-  font-size: 2.8928574rem;
+  font-size: 2.81250025rem;
   font-weight: 400;
   letter-spacing: 0;
   line-height: 1.066667;
 }
 
 .typography-display-1 {
-  font-size: 2.1857139rem;
+  font-size: 2.124999625rem;
   font-weight: 400;
   letter-spacing: 0;
   line-height: 1.176471;
 }
 
 .typography-headline {
-  font-size: 1.5428574rem;
+  font-size: 1.50000025rem;
   font-weight: 400;
   letter-spacing: 0;
   line-height: 1.333334;
 }
 
 .typography-title {
-  font-size: 1.2857139rem;
+  font-size: 1.249999625rem;
   font-weight: 500;
   letter-spacing: 0.02em;
   line-height: 1.4;
 }
 
 .typography-subheading {
-  font-size: 1.0285713rem;
+  font-size: 0.999999875rem;
   font-weight: 400;
   letter-spacing: 0.04em;
   line-height: 1.5;
 }
 
 .typography-body-2 {
-  font-size: 0.9rem;
+  font-size: 0.875rem;
   font-weight: 500;
   letter-spacing: 0;
   line-height: 1.428572;
 }
 
 .typography-body-1 {
-  font-size: 0.9rem;
+  font-size: 0.875rem;
   font-weight: 400;
   letter-spacing: 0;
   line-height: 1.428572;
 }
 
 .typography-caption {
-  font-size: 0.7714287rem;
+  font-size: 0.750000125rem;
   font-weight: 400;
   letter-spacing: 0;
   line-height: 1.5;
@@ -1605,7 +1603,7 @@ h6,
 
 h1,
 .h1 {
-  font-size: 2.8928574rem;
+  font-size: 2.81250025rem;
   font-weight: 400;
   letter-spacing: 0;
   line-height: 1.066667;
@@ -1613,7 +1611,7 @@ h1,
 
 h2,
 .h2 {
-  font-size: 2.1857139rem;
+  font-size: 2.124999625rem;
   font-weight: 400;
   letter-spacing: 0;
   line-height: 1.176471;
@@ -1621,7 +1619,7 @@ h2,
 
 h3,
 .h3 {
-  font-size: 1.5428574rem;
+  font-size: 1.50000025rem;
   font-weight: 400;
   letter-spacing: 0;
   line-height: 1.333334;
@@ -1629,7 +1627,7 @@ h3,
 
 h4,
 .h4 {
-  font-size: 1.2857139rem;
+  font-size: 1.249999625rem;
   font-weight: 500;
   letter-spacing: 0.02em;
   line-height: 1.4;
@@ -1637,7 +1635,7 @@ h4,
 
 h5,
 .h5 {
-  font-size: 1.0285713rem;
+  font-size: 0.999999875rem;
   font-weight: 400;
   letter-spacing: 0.04em;
   line-height: 1.5;
@@ -1645,42 +1643,42 @@ h5,
 
 h6,
 .h6 {
-  font-size: 0.9rem;
+  font-size: 0.875rem;
   font-weight: 500;
   letter-spacing: 0;
   line-height: 1.428572;
 }
 
 .display-1 {
-  font-size: 7.2rem;
+  font-size: 7rem;
   font-weight: 300;
   letter-spacing: -0.04em;
   line-height: 1;
 }
 
 .display-2 {
-  font-size: 3.6rem;
+  font-size: 3.5rem;
   font-weight: 400;
   letter-spacing: -0.02em;
   line-height: 1.035715;
 }
 
 .display-3 {
-  font-size: 2.8928574rem;
+  font-size: 2.81250025rem;
   font-weight: 400;
   letter-spacing: 0;
   line-height: 1.066667;
 }
 
 .display-4 {
-  font-size: 2.1857139rem;
+  font-size: 2.124999625rem;
   font-weight: 400;
   letter-spacing: 0;
   line-height: 1.176471;
 }
 
 .lead {
-  font-size: 1.2857139rem;
+  font-size: 1.249999625rem;
   font-weight: 500;
   letter-spacing: 0.02em;
   line-height: 1.4;
@@ -1766,7 +1764,7 @@ hr {
 
 .alert-dismissible .close {
   color: inherit;
-  padding: 0.97rem 1rem;
+  padding: 0.87500025rem 1rem;
   position: absolute;
   top: 0;
   right: 0;
@@ -1980,9 +1978,9 @@ hr {
 }
 
 .breadcrumb-item + .breadcrumb-item::before {
-  font-size: 1.6666666667em;
-  line-height: 0.6em;
-  vertical-align: -0.3481318681em;
+  font-size: 1.7142857143em;
+  line-height: 0.5833333333em;
+  vertical-align: -0.3021979231em;
   font-family: "Material Icons";
   font-feature-settings: "liga";
   -moz-osx-font-smoothing: grayscale;
@@ -2204,9 +2202,9 @@ hr {
 
 .carousel-control-next-icon,
 .carousel-control-prev-icon {
-  font-size: 1.6666666667em;
-  line-height: 0.6em;
-  vertical-align: -0.3481318681em;
+  font-size: 1.7142857143em;
+  line-height: 0.5833333333em;
+  vertical-align: -0.3021979231em;
   font-family: "Material Icons";
   font-feature-settings: "liga";
   -moz-osx-font-smoothing: grayscale;
@@ -2383,7 +2381,7 @@ pre code {
 }
 
 .form-check-input {
-  margin-top: 0.36rem;
+  margin-top: 0.2500003333rem;
   margin-left: -1.25rem;
   position: absolute;
 }
@@ -2456,28 +2454,28 @@ pre code {
 
 .col-form-label {
   color: inherit;
-  font-size: 0.9rem;
-  line-height: 1.6666666667;
+  font-size: 0.875rem;
+  line-height: 1.7142857143;
   padding-top: 0.375rem;
   padding-bottom: 0.375rem;
 }
 
 .col-form-label-lg {
-  font-size: 1.9125rem;
-  line-height: 1.30719;
+  font-size: 1.859375rem;
+  line-height: 1.3445382857;
   padding-top: 0.6249995625rem;
   padding-bottom: 0.6249995625rem;
 }
 
 .col-form-label-sm {
-  font-size: 0.73125rem;
-  line-height: 1.7094022222;
+  font-size: 0.7109375rem;
+  line-height: 1.7582422857;
   padding-top: 0.3749998125rem;
   padding-bottom: 0.3749998125rem;
 }
 
 .form-text {
-  font-size: 0.7714287rem;
+  font-size: 0.750000125rem;
   font-weight: 400;
   letter-spacing: 0;
   line-height: 1.5;
@@ -2554,7 +2552,7 @@ pre code {
 }
 
 .figure-caption {
-  font-size: 0.7714287rem;
+  font-size: 0.750000125rem;
   font-weight: 400;
   letter-spacing: 0;
   line-height: 1.5;
@@ -2792,12 +2790,12 @@ pre code {
 .popover {
   text-align: left;
   text-align: start;
-  font-family: "Nunito", sans-serif;
+  font-family: Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
   font-style: normal;
   font-weight: 400;
   letter-spacing: normal;
   line-break: auto;
-  line-height: 1.6;
+  line-height: 1.428572;
   text-decoration: none;
   text-shadow: none;
   text-transform: none;
@@ -2808,7 +2806,7 @@ pre code {
   background-color: #ffffff;
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.14), 0 4px 5px 0 rgba(0, 0, 0, 0.12), 0 1px 10px 0 rgba(0, 0, 0, 0.2);
   display: block;
-  font-size: 0.9rem;
+  font-size: 0.875rem;
   margin: 1.5rem;
   max-width: 17.5rem;
   position: absolute;
@@ -2831,7 +2829,7 @@ pre code {
 }
 
 .popover-header {
-  font-size: 1.2857139rem;
+  font-size: 1.249999625rem;
   font-weight: 500;
   letter-spacing: 0.02em;
   line-height: 1.4;
@@ -4085,12 +4083,10 @@ fieldset:disabled a.btn {
 }
 
 .card-columns {
-  -webkit-column-count: 2;
-     -moz-column-count: 2;
-          column-count: 2;
-  -webkit-column-gap: 0.5rem;
-     -moz-column-gap: 0.5rem;
-          column-gap: 0.5rem;
+  -moz-column-count: 2;
+       column-count: 2;
+  -moz-column-gap: 0.5rem;
+       column-gap: 0.5rem;
   margin-top: -0.25rem;
   margin-bottom: 0.25rem;
   orphans: 1;
@@ -4099,9 +4095,8 @@ fieldset:disabled a.btn {
 
 @media (min-width: 768px) {
   .card-columns {
-    -webkit-column-count: 3;
-       -moz-column-count: 3;
-            column-count: 3;
+    -moz-column-count: 3;
+         column-count: 3;
   }
 }
 
@@ -4207,7 +4202,7 @@ fieldset:disabled a.btn {
 }
 
 .card-subtitle {
-  font-size: 0.9rem;
+  font-size: 0.875rem;
   font-weight: 400;
   letter-spacing: 0;
   line-height: 1.428572;
@@ -4220,7 +4215,7 @@ fieldset:disabled a.btn {
 }
 
 .card-title {
-  font-size: 1.5428574rem;
+  font-size: 1.50000025rem;
   font-weight: 400;
   letter-spacing: 0;
   line-height: 1.333334;
@@ -4388,7 +4383,7 @@ fieldset:disabled a.btn {
 .table td,
 .table th {
   border-top: 1px solid #e1e1e1;
-  line-height: 1.6;
+  line-height: 1.428572;
   padding-right: 1.75rem;
   padding-left: 1.75rem;
   vertical-align: top;
@@ -4413,8 +4408,8 @@ fieldset:disabled a.btn {
   font-size: 0.8125rem;
   font-weight: 400;
   height: 3rem;
-  padding-top: 0.85rem;
-  padding-bottom: 0.85rem;
+  padding-top: 0.919642625rem;
+  padding-bottom: 0.919642625rem;
 }
 
 .table tfoot {
@@ -4426,8 +4421,8 @@ fieldset:disabled a.btn {
   font-size: 0.75rem;
   font-weight: 400;
   height: 3.5rem;
-  padding-top: 1.15rem;
-  padding-bottom: 1.15rem;
+  padding-top: 1.2142855rem;
+  padding-bottom: 1.2142855rem;
 }
 
 .table thead {
@@ -4439,8 +4434,8 @@ fieldset:disabled a.btn {
   font-size: 0.75rem;
   font-weight: 500;
   height: 3.5rem;
-  padding-top: 1.15rem;
-  padding-bottom: 1.15rem;
+  padding-top: 1.2142855rem;
+  padding-bottom: 1.2142855rem;
 }
 
 .card > .table:first-child,
@@ -4519,21 +4514,21 @@ fieldset:disabled a.btn {
 .table-sm tbody td,
 .table-sm tbody th {
   height: 2.25rem;
-  padding-top: 0.475rem;
-  padding-bottom: 0.475rem;
+  padding-top: 0.544642625rem;
+  padding-bottom: 0.544642625rem;
 }
 
 .table-sm tfoot td,
 .table-sm tfoot th {
-  padding-top: 0.65rem;
-  padding-bottom: 0.65rem;
+  padding-top: 0.7142855rem;
+  padding-bottom: 0.7142855rem;
 }
 
 .table-sm thead td,
 .table-sm thead th {
   height: 2.5rem;
-  padding-top: 0.65rem;
-  padding-bottom: 0.65rem;
+  padding-top: 0.7142855rem;
+  padding-bottom: 0.7142855rem;
 }
 
 .table-striped tbody tr:nth-of-type(odd) {
@@ -5076,7 +5071,7 @@ fieldset:disabled a.btn {
 }
 
 .modal-title {
-  font-size: 1.2857139rem;
+  font-size: 1.249999625rem;
   font-weight: 500;
   letter-spacing: 0.02em;
   line-height: 1.4;
@@ -5108,9 +5103,9 @@ fieldset:disabled a.btn {
   color: rgba(0, 0, 0, 0.87);
   display: block;
   font-size: 0.9375rem;
-  line-height: 1.6;
+  line-height: 1.428572;
   min-height: 3rem;
-  padding: 0.75rem 1.5rem;
+  padding: 0.830356875rem 1.5rem;
   position: relative;
 }
 
@@ -5453,7 +5448,7 @@ fieldset:disabled a.btn {
   display: flex;
   justify-content: space-between;
   min-height: 3rem;
-  padding: 0.75rem 1.5rem;
+  padding: 0.830356875rem 1.5rem;
   text-align: inherit;
   width: 100%;
 }
@@ -6100,9 +6095,9 @@ fieldset:disabled a.btn {
 }
 
 .dropdown-toggle::after {
-  font-size: 1.6666666667em;
-  line-height: 0.6em;
-  vertical-align: -0.3481318681em;
+  font-size: 1.7142857143em;
+  line-height: 0.5833333333em;
+  vertical-align: -0.3021979231em;
   font-family: "Material Icons";
   font-feature-settings: "liga";
   -moz-osx-font-smoothing: grayscale;
@@ -6138,9 +6133,9 @@ fieldset:disabled a.btn {
 }
 
 .dropleft .dropdown-toggle::before {
-  font-size: 1.6666666667em;
-  line-height: 0.6em;
-  vertical-align: -0.3481318681em;
+  font-size: 1.7142857143em;
+  line-height: 0.5833333333em;
+  vertical-align: -0.3021979231em;
   font-family: "Material Icons";
   font-feature-settings: "liga";
   -moz-osx-font-smoothing: grayscale;
@@ -7047,7 +7042,7 @@ fieldset:disabled a.btn {
   transition-duration: 0.375s;
   transition-property: opacity, transform;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  font-size: 0.9rem;
+  font-size: 0.875rem;
   font-weight: 400;
   letter-spacing: 0;
   line-height: 1.428572;
@@ -7200,7 +7195,7 @@ fieldset:disabled a.btn {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: 2.1857139rem;
+  font-size: 2.124999625rem;
   font-weight: 400;
   letter-spacing: 0;
   line-height: 1.176471;
@@ -8131,7 +8126,7 @@ fieldset:disabled a.btn {
 
 .custom-control {
   display: block;
-  min-height: 1.44rem;
+  min-height: 1.2500005rem;
   padding-left: 2.25rem;
   position: relative;
 }
@@ -8151,7 +8146,7 @@ fieldset:disabled a.btn {
 
 .custom-control-label {
   color: inherit;
-  font-size: 0.9rem;
+  font-size: 0.875rem;
   line-height: inherit;
   margin-bottom: 0;
 }
@@ -8159,7 +8154,7 @@ fieldset:disabled a.btn {
 .custom-control-label::after {
   color: rgba(0, 0, 0, 0.54);
   position: absolute;
-  top: -0.03rem;
+  top: -0.12499975rem;
   left: 0;
 }
 
@@ -8173,7 +8168,7 @@ fieldset:disabled a.btn {
   content: "";
   display: block;
   height: 3rem;
-  margin-top: -0.78rem;
+  margin-top: -0.87499975rem;
   margin-left: -0.75rem;
   opacity: 0;
   position: absolute;
@@ -8234,9 +8229,9 @@ fieldset:disabled a.btn {
 }
 
 .custom-checkbox .custom-control-label::after {
-  font-size: 1.6666666667em;
-  line-height: 0.6em;
-  vertical-align: -0.3481318681em;
+  font-size: 1.7142857143em;
+  line-height: 0.5833333333em;
+  vertical-align: -0.3021979231em;
   font-family: "Material Icons";
   font-feature-settings: "liga";
   -moz-osx-font-smoothing: grayscale;
@@ -8262,9 +8257,9 @@ fieldset:disabled a.btn {
 }
 
 .custom-radio .custom-control-label::after {
-  font-size: 1.6666666667em;
-  line-height: 0.6em;
-  vertical-align: -0.3481318681em;
+  font-size: 1.7142857143em;
+  line-height: 0.5833333333em;
+  vertical-align: -0.3021979231em;
   font-family: "Material Icons";
   font-feature-settings: "liga";
   -moz-osx-font-smoothing: grayscale;
@@ -8378,7 +8373,7 @@ fieldset:disabled a.btn {
   display: block;
   height: 1.5rem;
   position: absolute;
-  top: -0.03rem;
+  top: -0.12499975rem;
   left: 0;
   width: 3rem;
 }
@@ -8695,7 +8690,7 @@ fieldset:disabled a.btn {
   color: white;
   display: flex;
   font-size: 0.875rem;
-  line-height: 1.6;
+  line-height: 1.428572;
   opacity: 0;
   padding: 0.875rem 1.5rem;
   position: fixed;
@@ -9449,9 +9444,9 @@ textarea.form-control-sm:not([rows="1"]) {
 }
 
 .custom-file-label::after {
-  font-size: 1.6666666667em;
-  line-height: 0.6em;
-  vertical-align: -0.3481318681em;
+  font-size: 1.7142857143em;
+  line-height: 0.5833333333em;
+  vertical-align: -0.3021979231em;
   font-family: "Material Icons";
   font-feature-settings: "liga";
   -moz-osx-font-smoothing: grayscale;
@@ -9502,7 +9497,7 @@ textarea.form-control-sm:not([rows="1"]) {
 }
 
 .invalid-feedback {
-  font-size: 0.7714287rem;
+  font-size: 0.750000125rem;
   font-weight: 400;
   letter-spacing: 0;
   line-height: 1.5;
@@ -9526,11 +9521,11 @@ textarea.form-control-sm:not([rows="1"]) {
   color: white;
   display: none;
   font-size: 0.875rem;
-  line-height: 1.6;
+  line-height: 1.428572;
   margin-top: 0.5rem;
   max-width: 100%;
   opacity: 0.9;
-  padding: 0.3rem 1rem;
+  padding: 0.37499975rem 1rem;
   position: absolute;
   top: 100%;
   text-align: center;
@@ -9541,7 +9536,7 @@ textarea.form-control-sm:not([rows="1"]) {
 @media (min-width: 768px) {
   .invalid-tooltip {
     font-size: 0.625rem;
-    padding: 0.1875rem 0.5rem;
+    padding: 0.24107125rem 0.5rem;
   }
 }
 
@@ -9700,7 +9695,7 @@ textarea.is-invalid.form-control:hover:not([rows="1"]),
 }
 
 .valid-feedback {
-  font-size: 0.7714287rem;
+  font-size: 0.750000125rem;
   font-weight: 400;
   letter-spacing: 0;
   line-height: 1.5;
@@ -9724,11 +9719,11 @@ textarea.is-invalid.form-control:hover:not([rows="1"]),
   color: white;
   display: none;
   font-size: 0.875rem;
-  line-height: 1.6;
+  line-height: 1.428572;
   margin-top: 0.5rem;
   max-width: 100%;
   opacity: 0.9;
-  padding: 0.3rem 1rem;
+  padding: 0.37499975rem 1rem;
   position: absolute;
   top: 100%;
   text-align: center;
@@ -9739,7 +9734,7 @@ textarea.is-invalid.form-control:hover:not([rows="1"]),
 @media (min-width: 768px) {
   .valid-tooltip {
     font-size: 0.625rem;
-    padding: 0.1875rem 0.5rem;
+    padding: 0.24107125rem 0.5rem;
   }
 }
 
@@ -10504,7 +10499,7 @@ textarea.is-valid.form-control:hover:not([rows="1"]),
   transition-property: color;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   color: rgba(0, 0, 0, 0.42);
-  font-size: 0.9rem;
+  font-size: 0.875rem;
   margin-right: 1rem;
   order: -1;
 }
@@ -10587,7 +10582,7 @@ textarea.is-valid.form-control:hover:not([rows="1"]),
 }
 
 .input-group-lg > .input-group-icon {
-  font-size: 1.9125rem;
+  font-size: 1.859375rem;
   line-height: 1.176471;
 }
 
@@ -10638,7 +10633,7 @@ textarea.is-valid.form-control:hover:not([rows="1"]),
 }
 
 .input-group-sm > .input-group-icon {
-  font-size: 0.73125rem;
+  font-size: 0.7109375rem;
   line-height: 1.538462;
 }
 
@@ -10888,7 +10883,7 @@ textarea.is-valid.form-control:hover:not([rows="1"]),
 }
 
 .navbar-brand {
-  font-size: 1.2857139rem;
+  font-size: 1.249999625rem;
   font-weight: 500;
   letter-spacing: 0.02em;
   line-height: 1.4;
@@ -11272,9 +11267,9 @@ textarea.is-valid.form-control:hover:not([rows="1"]),
 }
 
 .navbar-toggler-icon {
-  font-size: 1.6666666667em;
-  line-height: 0.6em;
-  vertical-align: -0.3481318681em;
+  font-size: 1.7142857143em;
+  line-height: 0.5833333333em;
+  vertical-align: -0.3021979231em;
   font-family: "Material Icons";
   font-feature-settings: "liga";
   -moz-osx-font-smoothing: grayscale;
@@ -11296,12 +11291,12 @@ textarea.is-valid.form-control:hover:not([rows="1"]),
 .tooltip {
   text-align: left;
   text-align: start;
-  font-family: "Nunito", sans-serif;
+  font-family: Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
   font-style: normal;
   font-weight: 400;
   letter-spacing: normal;
   line-break: auto;
-  line-height: 1.6;
+  line-height: 1.428572;
   text-decoration: none;
   text-shadow: none;
   text-transform: none;
@@ -11310,7 +11305,7 @@ textarea.is-valid.form-control:hover:not([rows="1"]),
   word-spacing: normal;
   display: block;
   font-size: 0.875rem;
-  line-height: 1.6;
+  line-height: 1.428572;
   margin: 1.5rem;
   opacity: 0;
   position: absolute;
@@ -11345,7 +11340,7 @@ textarea.is-valid.form-control:hover:not([rows="1"]),
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   background-color: #616161;
   color: white;
-  padding: 0.3rem 1rem;
+  padding: 0.37499975rem 1rem;
   text-align: center;
   transform: scale(0.87);
 }
@@ -11370,7 +11365,7 @@ textarea.is-valid.form-control:hover:not([rows="1"]),
 
 @media (min-width: 768px) {
   .tooltip-inner {
-    padding: 0.1875rem 0.5rem;
+    padding: 0.24107125rem 0.5rem;
   }
 }
 
@@ -15116,9 +15111,9 @@ a.text-light:hover {
 }
 
 .material-icons {
-  font-size: 1.6666666667em;
-  line-height: 0.6em;
-  vertical-align: -0.3481318681em;
+  font-size: 1.7142857143em;
+  line-height: 0.5833333333em;
+  vertical-align: -0.3021979231em;
 }
 
 .material-icons-inline {
