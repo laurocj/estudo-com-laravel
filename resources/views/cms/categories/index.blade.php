@@ -1,7 +1,7 @@
 @extends($layout)
 
 @section('content')
-    <x-table-index title="Categories" :routeNew="route('categorias.create')" :source="$categories">
+    <x-table-index title="Categories" :route-new="route('categorias.create')" :source="$categories">
         <x-slot name="thead">
             <tr>
                 <th scope="col">Id</th>
@@ -20,10 +20,7 @@
                     {{-- <a data-toggle="modal" data-load-url="{{route('categorias.edit',$category->id)}}"
                         data-target="#modalContent" href="#" class='btn btn-dark btn-sm'>Edit - modal</a> --}}
 
-                    {!! Form::open(array('route' => ['categorias.destroy',$category->id],'method' =>
-                    'delete','class'=>'d-inline')) !!}
-                    {!! Form::submit(__('Delete'), array( 'class'=>'btn btn-danger btn-sm' )) !!}
-                    {!! Form::close() !!}
+                    @destroy(['route' => ['categorias.destroy',$category->id]])
                 </td>
             </tr>
             @endforeach
