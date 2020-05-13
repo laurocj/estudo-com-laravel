@@ -16,11 +16,11 @@
     </div>
 
     <div class="card-body">
-            @input([
-                    'label' => 'Title:',
-                    'type' => 'text',
-                    'name' => 'name'
-                    ])
+        @input([
+            'label' => 'Title:',
+            'type' => 'text',
+            'name' => 'name'
+        ])
     </div>
 </form>
 @endsection

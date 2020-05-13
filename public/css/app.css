@@ -15280,3 +15280,9 @@ a.text-light:hover {
   font-feature-settings: "liga";
 }
 
+@media (min-width: 768px) {
+  .content-wrapper {
+    margin-left: 17.5rem;
+  }
+}
+

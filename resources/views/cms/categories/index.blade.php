@@ -20,7 +20,7 @@
                     {{-- <a data-toggle="modal" data-load-url="{{route('categorias.edit',$category->id)}}"
                         data-target="#modalContent" href="#" class='btn btn-dark btn-sm'>Edit - modal</a> --}}
 
-                    @destroy(['route' => ['categorias.destroy',$category->id]])
+                    @destroy(['route' => route('categorias.destroy',$category->id)])
                 </td>
             </tr>
             @endforeach

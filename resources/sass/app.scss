@@ -10,3 +10,9 @@
 // Material
 @import "node_modules/daemonite-material/assets/scss/material";
 @import "node_modules/material-icons/iconfont/material-icons";
+
+@include media-breakpoint-up(md) {
+    .content-wrapper {
+      margin-left: $navdrawer-width;
+    }
+  }
