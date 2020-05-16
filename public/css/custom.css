@@ -19,3 +19,7 @@ main table thead tr th:nth-last-child(1) {
 .input-group-append .material-icons {
     line-height: 58%;
 }
+
+.navdrawer-content {
+    background-color: #fafafa;
+}
