@@ -52,8 +52,8 @@ class CategoriesController extends CmsController
         $this->_itensPerPages = $request->itensPerPages ?? $this->_itensPerPages;
         if (empty($request->q)) {
             $categories = $this->service
-            ->paginate($this->_itensPerPages)
-            ->appends(['itensPerPages' => $this->_itensPerPages]);
+                                ->paginate($this->_itensPerPages)
+                                ->appends(['itensPerPages' => $this->_itensPerPages]);
         } else {
             $categories = $this->search($request);
         }
@@ -72,10 +72,10 @@ class CategoriesController extends CmsController
             $search['name'] = $request->q;
             $appends['q'] = $request->q;
             $appends['itensPerPages'] = $this->_itensPerPages;
-            return $this
-                ->service
-                ->search($appends['itensPerPages'], $search)
-                ->appends($appends);
+
+            return $this->service
+                        ->search($appends['itensPerPages'], $search)
+                        ->appends($appends);
         }
     }
 

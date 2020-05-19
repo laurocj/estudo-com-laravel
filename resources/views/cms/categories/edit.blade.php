@@ -1,6 +1,6 @@
-@extends($layout)
+@extends($_keyLayout)
 
-@section('content')
+@section($_keyContent)
 <form action="{{ route('categorias.update',$category->id) }}" class="card" method="post">
     @method('put')
     @csrf

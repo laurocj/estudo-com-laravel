@@ -1,6 +1,6 @@
-@extends($layout)
+@extends($_keyLayout)
 
-@section('content')
+@section($_keyContent)
 <div class="col-12">
 
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-4 pb-2 border-bottom">

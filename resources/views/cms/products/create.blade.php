@@ -1,6 +1,6 @@
-@extends($layout)
+@extends($_keyLayout)
 
-@section('content')
+@section($_keyContent)
 <div class="col-12">
     <div class="pt-4 pb-2 border-bottom">
         <h1 class="h2">{{__('New Products')}}</h1>

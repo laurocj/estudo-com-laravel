@@ -39,17 +39,17 @@ class UsersTest extends TestCase
         return $user;
     }
 
-    /**
-     * @depends testCreateUser
-     */
-    public function testAddRoles(User $user)
-    {
-        $role = Role::findByName('Admin');
+    // /**
+    //  * @depends testCreateUser
+    //  */
+    // public function testAddRoles(User $user)
+    // {
+    //     $role = Role::findByName('Admin');
 
-        $user->assignRole([$role->id]);
+    //     $user->assignRole([$role->id]);
 
-        $this->assertTrue($user::find($user->id)->hasRole($role->name));
-    }
+    //     $this->assertTrue($user::find($user->id)->hasRole($role->name));
+    // }
 
     /**
      * @depends testCreateUser
@@ -61,8 +61,9 @@ class UsersTest extends TestCase
         $service = new UserService(new UserRepository());
 
         $updated = $service->update(
-            $user,
-            ['name' => $newName]
+            $user->id,
+            $newName,
+            $user->email
         );
 
         $this->assertTrue($updated);

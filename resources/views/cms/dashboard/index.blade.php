@@ -1,6 +1,6 @@
-@extends($layout)
+@extends($_keyLayout)
 
-@section('content')
+@section($_keyContent)
 <div class="card">
     <div class="card-header">Dashboard</div>
 

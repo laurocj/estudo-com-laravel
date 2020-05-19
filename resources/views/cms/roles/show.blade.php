@@ -1,7 +1,7 @@
-@extends($layout)
+@extends($_keyLayout)
 
 
-@section('content')
+@section($_keyContent)
 <div class="col-lg-12 margin-tb">
     <div class="pull-left">
         <h2> Show Role</h2>

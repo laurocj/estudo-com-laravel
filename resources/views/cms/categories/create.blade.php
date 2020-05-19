@@ -1,6 +1,6 @@
-@extends($layout)
+@extends($_keyLayout)
 
-@section('content')
+@section($_keyContent)
 <form action="{{ route('categorias.store') }}" method="post" class="card">
     @csrf
     <div class="card-header">

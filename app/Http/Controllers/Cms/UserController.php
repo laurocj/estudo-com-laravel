@@ -83,9 +83,9 @@ class UserController extends CmsController
      *
      * @return \Illuminate\Http\Response
      */
-    public function create(RoleRepository $roleRepository)
+    public function create()
     {
-        $roles = $roleRepository->lists('name');
+        // $roles = $roleRepository->lists('name');
         return $this->showView(__FUNCTION__, compact('roles'));
     }
 
@@ -137,7 +137,7 @@ class UserController extends CmsController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id, RoleRepository $roleRepository)
+    public function edit($id)
     {
         try {
 
@@ -149,9 +149,9 @@ class UserController extends CmsController
 
         }
 
-        $roles = $roleRepository->lists('name', 'name');
+        // $roles = $roleRepository->lists('name', 'name');
 
-        $userRole = $user->roles->pluck('name', 'name')->all();
+        // $userRole = $user->roles->pluck('name', 'name')->all();
 
         return $this->showView(__FUNCTION__, compact('user', 'roles', 'userRole'));
     }

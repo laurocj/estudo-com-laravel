@@ -1,6 +1,8 @@
 @php
 $id = isset($id) ? $id : Str::random(10);
 
+$value = old($name) ? old($name) : ($value ?? null);
+
 $class = isset($class) ? "form-control $class" : "form-control ";
 
 if($errors->has($name)) {
@@ -16,7 +18,7 @@ if($errors->has($name)) {
     <input id="{{ $id }}"
         name="{{ $name }}"
         class="{{ $class }}"
-        value="{{ $value ?? null }}"
+        value="{{ $value }}"
         type="{{ $type ?? 'text' }}"
         @isset($help) aria-describedby="{{ $id }}Help" @endisset
         @isset($placeholder) placeholder="{{ $placeholder }}" @endisset

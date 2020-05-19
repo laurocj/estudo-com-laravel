@@ -91,7 +91,7 @@ class UserService
      *
      * @return User|null
      */
-    public function create(string $name, string $email, string $password, array $roles = [])
+    public function create(string $name, string $email, string $password, ?array $roles = [])
     {
         $user = new User();
         $user->name         = $name;
@@ -124,13 +124,15 @@ class UserService
      *
      * @throws ModelNotFoundException
      */
-    public function update(int $id, string $name, string $email, string $password, array $roles = [])
+    public function update(int $id, string $name, string $email, ?string $password = null, ?array $roles = [])
     {
         $user = $this->find($id);
 
         $user->name         = $name;
         $user->email        = $email;
-        $user->password     = $this->encrypt($password);
+
+        if(!empty($password))
+            $user->password     = $this->encrypt($password);
 
         DB::beginTransaction();
 

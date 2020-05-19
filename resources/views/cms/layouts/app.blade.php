@@ -11,11 +11,11 @@
 
             @include('cms.layouts.navbar')
 
-            <div class="row">
+            <div class="row my-4">
                 @component('cms.layouts.component.alert')
                 @endcomponent
-                <main class="col-12 pt-3">
-                    @yield('content')
+                <main class="col-12">
+                    @yield($_keyContent)
                 </main>
             </div>
         </div>

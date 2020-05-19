@@ -48,7 +48,7 @@ class LoginLogoutTest extends TestCase
     {
         $credential = [
             'email' => 'admin@gmail.com',
-            'password' => '123456'
+            'password' => '12345678'
         ];
 
         $response = $this->post('login',$credential);
@@ -56,21 +56,21 @@ class LoginLogoutTest extends TestCase
         $response->assertSessionMissing('errors');
     }
 
-    /**
-     * A test url Forbidden.
-     */
-    public function testUrlForbidden()
-    {
-        $credential = [
-            'email' => 'teste@teste.com',
-            'password' => '123456'
-        ];
+    // /**
+    //  * A test url Forbidden.
+    //  */
+    // public function testUrlForbidden()
+    // {
+    //     $credential = [
+    //         'email' => 'teste@teste.com',
+    //         'password' => '123456'
+    //     ];
 
-        $this->post('login',$credential);
+    //     $this->post('login',$credential);
 
-        $response = $this->get('/cms/usuarios/1/editar');
+    //     $response = $this->get('/cms/usuarios/1/editar');
 
-        $response->assertForbidden();
-    }
+    //     $response->assertForbidden();
+    // }
 
 }

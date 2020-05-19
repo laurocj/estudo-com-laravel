@@ -26,8 +26,8 @@ class UsersFormRequest extends FormRequest
         return [
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,'.$this->getIdInUrl(),
-            'password' => 'required|string|min:8|confirmed',
-            'roles' => 'required'
+            'password' => 'nullable|string|min:8|confirmed',
+            // 'roles' => 'required'
         ];
     }
 

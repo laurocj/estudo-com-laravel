@@ -1,6 +1,6 @@
-@extends($layout)
+@extends($_keyLayout)
 
-@section('content')
+@section($_keyContent)
     <x-table-index title="Categories" :route-new="route('categorias.create')" :source="$categories">
         <x-slot name="thead">
             <tr>
