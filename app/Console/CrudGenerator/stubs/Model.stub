@@ -1,0 +1,38 @@
+<?php
+
+namespace {{modelNamespace}};
+
+use Illuminate\Database\Eloquent\Model;
+{{softDeletesNamespace}}
+/**
+ * Class {{modelName}}
+ {{properties}}
+ */
+class {{modelName}} extends Model
+{
+    {{softDeletes}}
+
+    /**
+     * Tabela correspondente desse modelo no banco de dados.
+     *
+     * @var string
+     */
+    protected $table = '{{table}}';
+
+    /**
+     * A coluna no banco de dados que corresponde ao id da tabela.
+     *
+     * @var string
+     */
+    protected $primaryKey = '{{primaryKey}}';
+
+    /**
+     * Indica se o modelo deve ser marcado com data e hora.
+     *
+     * @var bool
+     */
+    public $timestamps = false;
+
+{{relations}}
+
+}

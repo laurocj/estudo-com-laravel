@@ -37,8 +37,9 @@ class RegisterController extends Controller
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(UserService $service)
     {
+        $this->service = $service;
         $this->middleware('guest');
     }
 
@@ -63,9 +64,9 @@ class RegisterController extends Controller
      * @param  array  $data
      * @return \App\User
      */
-    protected function create(array $data,UserService $service)
+    protected function create(array $data)
     {
-        return $service->create(
+        return $this->service->create(
             $data['name'],
             $data['email'],
             $data['password']);

@@ -1,0 +1,136 @@
+<?php
+
+namespace {{serviceNamespace}};
+
+use Illuminate\Support\Facades\DB;
+use {{modelNamespace}}\{{modelName}};
+use {{repositoryNamespace}}\{{modelName}}Repository;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+
+class {{modelName}}Service
+{
+
+    /**
+     * {{modelName}} Repository
+     *
+     * @var {{modelName}}Repository
+     */
+    private $repository;
+
+    /**
+     * {{modelName}} Repository
+     * @param {{modelName}}Repository
+     *
+     * @return this
+     */
+    public function __construct({{modelName}}Repository $repository)
+    {
+        $this->repository = $repository;
+    }
+
+    /**
+     * Delete a model by its primary key
+     * @param int $id
+     * @return boolean
+     *
+     * @throws ModelNotFoundException|QueryException
+     */
+    public function delete(int $id)
+    {
+        ${{modelNameLowerCase}} = $this->find($id);
+
+        return $this->repository->delete(${{modelNameLowerCase}});
+    }
+
+    /**
+     * Find a model by its primary key
+     * @param int $id
+     * @return {{modelName}}
+     *
+     * @throws ModelNotFoundException
+     */
+    public function find(int $id)
+    {
+        ${{modelNameLowerCase}} = $this->repository->find($id);
+
+        if(empty(${{modelNameLowerCase}})) {
+            throw (new ModelNotFoundException)->setModel(
+                get_class({{modelName}}::class), $id
+            );
+        }
+
+        return ${{modelNameLowerCase}};
+    }
+
+    /**
+     * @param int $itensPerPages
+     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
+     */
+    public function paginate(int $itensPerPages)
+    {
+        return $this->repository->paginate($itensPerPages);
+    }
+
+    /**
+     * @param int $itensPerPages
+     * @param array $search
+     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
+     */
+    public function search(int $itensPerPages, array $search)
+    {
+        return $this->repository->search($itensPerPages,$search);
+    }
+
+    /**
+     * Create {{modelName}}
+     * @param string $name
+     *
+     * @return Boolean|{{modelName}}
+     */
+    public function create({{params}}
+    ) {
+
+        ${{modelNameLowerCase}} = new {{modelName}}();
+        {{attributes}}
+
+        DB::beginTransaction();
+
+        $isOk = $this->repository->save(${{modelNameLowerCase}});
+
+        if ($isOk) {
+            DB::commit();
+            return ${{modelNameLowerCase}};
+        } else {
+            DB::rollBack();
+            return $isOk;
+        }
+    }
+
+    /**
+     * Update {{modelName}}
+     *
+     * @param int $id
+     * @param string $name
+     *
+     * @return boolean
+     */
+    public function update(
+        int $id,{{params}}
+    ) {
+
+        ${{modelNameLowerCase}} = $this->repository->find($id);
+        ${{modelNameLowerCase}}->id = $id;{{attributes}}
+
+        DB::beginTransaction();
+
+        $isOk = $this->repository->save(${{modelNameLowerCase}});
+
+        if ($isOk) {
+            DB::commit();
+        } else {
+            DB::rollBack();
+        }
+
+        return $isOk;
+    }
+}

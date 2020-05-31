@@ -1,0 +1,20 @@
+<?php
+
+namespace {{repositoryNamespace}};
+
+use {{modelNamespace}}\{{modelName}};
+use App\Repository\GenericRepository;
+
+class {{modelName}}Repository
+{
+    // operações basicas de pesquisa
+    use GenericRepository;
+
+    /**
+     * Construtor
+     */
+    public function __construct()
+    {
+        $this->query = {{modelName}}::query();
+    }
+}

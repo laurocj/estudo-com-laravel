@@ -1,0 +1,26 @@
+@extends($_keyLayout)
+
+@section($_keyContent)
+    <x-table-index title="{{modelTitle}}" :route-new="route('{{modelRoute}}.create')" :source="${{modelNamePluralLowerCase}}">
+        <x-slot name="thead">
+            <tr>
+                <th scope="col">Id</th>
+                <th scope="col">Name</th>
+                <th scope="col">Action</th>
+            </tr>
+        </x-slot>
+        <x-slot name="tbody">
+            @foreach(${{modelNamePluralLowerCase}} as ${{modelNameLowerCase}})
+            <tr>
+                <th scope="row">{{${{modelNameLowerCase}}->id}}</th>
+                <td>{{${{modelNameLowerCase}}->name}}</td>
+                <td>
+                    <a href="{{route('{{modelRoute}}.edit',${{modelNameLowerCase}}->id)}}" class='btn btn-primary btn-sm'>Edit</a>
+
+                    @destroy(['route' => route('{{modelRoute}}.destroy',${{modelNameLowerCase}}->id)])
+                </td>
+            </tr>
+            @endforeach
+        </x-slot>
+    </x-table-index>
+@endsection

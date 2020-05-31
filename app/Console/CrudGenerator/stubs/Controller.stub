@@ -1,0 +1,192 @@
+<?php
+
+namespace {{controllerNamespace}};
+
+use Illuminate\Support\Str;
+use Illuminate\Http\Request;
+use Illuminate\Database\QueryException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use App\Http\Controllers\Cms\CmsController;
+
+use {{modelNamespace}}\{{modelName}};
+use {{serviceNamespace}}\{{modelName}}Service;
+use {{requestNamespace}}\{{modelName}}\{{modelName}}StoreRequest;
+use {{requestNamespace}}\{{modelName}}\{{modelName}}UpdateRequest;
+
+/**
+ * Class {{modelName}}Controller
+ * @package App\Http\Controllers
+ */
+class {{modelName}}Controller extends CmsController
+{
+    /**
+     * Path to views
+     */
+    protected $_path = '{{moduleLower}}::{{modelView}}.';
+
+    /**
+     * Action Index in controller
+     */
+    protected $_actionIndex = '\{{controllerNamespace}}\{{modelName}}Controller@index';
+
+    /**
+     * {{serviceNamespace}}\{{modelName}}Service
+     *
+     * @var {{serviceNamespace}}\{{modelName}}Service
+     */
+    private $service;
+
+    function __construct({{modelName}}Service $service)
+    {
+        parent::__construct('{{modelView}}');
+        $this->service = $service;
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index(Request $request)
+    {
+        $this->_itensPerPages = $request->itensPerPages ?? $this->_itensPerPages;
+        if (empty($request->q)) {
+            ${{modelNamePluralLowerCase}} = $this->service
+                                ->paginate($this->_itensPerPages)
+                                ->appends(['itensPerPages' => $this->_itensPerPages]);
+        } else {
+            ${{modelNamePluralLowerCase}} = $this->search($request);
+        }
+
+        return $this->showView(__FUNCTION__, compact('{{modelNamePluralLowerCase}}'));
+    }
+
+    /**
+     * Para pesquisa
+     * @param Request $request
+     */
+    public function search(Request $request)
+    {
+        if ($request->has('q')) {
+            $search = [];
+            $search['name'] = $request->q;
+            $appends['q'] = $request->q;
+            $appends['itensPerPages'] = $this->_itensPerPages;
+
+            return $this->service
+                        ->search($appends['itensPerPages'], $search)
+                        ->appends($appends);
+        }
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+        return $this->showView('create');
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store({{modelName}}StoreRequest $request)
+    {
+        ${{modelNameLowerCase}} = $this->service->create({{params}}
+                    );
+
+        if (empty(${{modelNameLowerCase}})) {
+            return $this->returnIndexStatusNotOk(__('Was not created!'));
+        }
+
+        return $this->returnIndexStatusOk(${{modelNameLowerCase}}->name . ' created');
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show($id)
+    {
+        //
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int $id
+     * @return \Illuminate\Http\Response
+     */
+    public function edit($id)
+    {
+        try {
+
+            ${{modelNameLowerCase}} = $this->service->find($id);
+
+        } catch (\Throwable $th) {
+
+            return $this->returnIndexStatusNotOk(__('Not found !'));
+
+        }
+
+        return $this->showView(__FUNCTION__, compact('{{modelNameLowerCase}}'));
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request $request
+     * @param  int $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update({{modelName}}UpdateRequest $request, $id)
+    {
+        try {
+
+            if ($this->service->update(
+                    $id,{{params}}
+                )
+            )
+                return $this->returnIndexStatusOk(__('Updated !'));
+
+        } catch (\Throwable $th) {
+
+            if($th instanceof ModelNotFoundException)
+                $error = __('Not found !');
+        }
+
+        return $this->returnIndexStatusNotOk($error ?? 'Not updated');
+    }
+
+    /**
+     * @param int $id
+     * @return \Illuminate\Http\RedirectResponse
+     * @throws \Exception
+     */
+    public function destroy($id)
+    {
+       try {
+
+            if ($this->service->delete($id)) {
+                return $this->returnIndexStatusOk(__('Deleted !'));
+            }
+
+        } catch (\Throwable $th) {
+
+            if($th instanceof QueryException && Str::is('*Integrity constraint violation*',$th->getMessage()))
+                $error = 'It cannot be deleted, it is in use in another record.';
+
+            if($th instanceof ModelNotFoundException)
+                $error = __('Not found !');
+        }
+
+        return $this->returnIndexStatusNotOk($error ?? "Not Deleted !");
+    }
+}

@@ -1,0 +1,49 @@
+<?php
+
+namespace {{requestNamespace}}\{{modelName}};
+
+use Illuminate\Foundation\Http\FormRequest;
+
+class {{modelName}}UpdateRequest extends FormRequest
+{
+    /**
+     * Determine if the user is authorized to make this request.
+     *
+     * @return bool
+     */
+    public function authorize()
+    {
+        return true;
+    }
+
+    /**
+     * Para substituir o nome do atributo na messagem de erro.
+     */
+    public function attributes()
+    {
+        return [
+            'numero' => 'número'
+        ];
+    }
+
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array
+     */
+    public function rules()
+    {
+        return [{{rules}}
+        ];
+    }
+
+    /**
+     * Get the messages.
+     *
+     * @return array
+     */
+    public function messages()
+    {
+        return [];
+    }
+}
