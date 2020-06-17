@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Services;
+namespace Modules\Setting\Services;
 
-use App\Repository\RoleRepository;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Modules\Setting\Repository\RoleRepository;
 
 class RoleService
 {

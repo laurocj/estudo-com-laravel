@@ -1,29 +1,29 @@
 <?php
 
-
-namespace App\Http\Controllers\Cms;
+namespace Modules\Setting\Http\Controllers;
 
 use Illuminate\Http\Request;
 
 use App\Http\Controllers\Cms\CmsController;
-use App\Http\Requests\RolesFormRequest;
-use App\Repository\PermissionRepository;
-use App\Services\RoleService;
+
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Str;
+use Modules\Setting\Http\Requests\Role\RolesFormRequest;
+use Modules\Setting\Repository\PermissionRepository;
+use Modules\Setting\Services\RoleService;
 
 class RolesController extends CmsController
 {
     /**
      * Path to views
      */
-    protected $_path = 'cms.roles.';
+    protected $_path = 'setting::roles.';
 
     /**
      * Action Index in controller
      */
-    protected $_actionIndex = 'Cms\RolesController@index';
+    protected $_actionIndex = '\Modules\Setting\Http\Controllers\RolesController@index';
 
     /**
      * Service
@@ -51,8 +51,8 @@ class RolesController extends CmsController
         $this->_itensPerPages = $request->itensPerPages ?? $this->_itensPerPages;
         if (empty($request->q)) {
             $roles = $this->service
-            ->paginate($this->_itensPerPages)
-            ->appends(['itensPerPages' => $this->_itensPerPages]);
+                            ->paginate($this->_itensPerPages)
+                            ->appends(['itensPerPages' => $this->_itensPerPages]);
         } else {
             $roles = $this->search($request);
         }
@@ -92,7 +92,7 @@ class RolesController extends CmsController
     /**
      * Store a newly created resource in storage.
      *
-     * @param  App\Http\Requests\RolesFormRequest  $request
+     * @param  Modules\Setting\Http\Requests\Roles\RolesFormRequest  $request
      * @return \Illuminate\Http\Response
      */
     public function store(RolesFormRequest $request)
@@ -160,7 +160,7 @@ class RolesController extends CmsController
     /**
      * Update the specified resource in storage.
      *
-     * @param  App\Http\Requests\RolesFormRequest  $request
+     * @param Modules\Setting\Http\Requests\Role\RolesFormRequest  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */

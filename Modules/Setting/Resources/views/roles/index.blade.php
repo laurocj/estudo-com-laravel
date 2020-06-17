@@ -29,9 +29,7 @@
                             <a href="{{route('regras.edit',$role->id)}}" class='btn btn-primary btn-sm '>Edit</a>
                         @endcan
                         @can('role-delete')
-                            {!! Form::open(array('route' => ['regras.destroy',$role->id],'method' => 'delete','class'=>'d-inline')) !!}
-                            {!! Form::submit(__('Delete'), array( 'class'=>'btn btn-danger btn-sm' )) !!}
-                            {!! Form::close() !!}
+                            @destroy(['route' => route('regras.destroy',$role->id)])
                         @endcan
                     </td>
                 </tr>

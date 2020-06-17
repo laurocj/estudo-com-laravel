@@ -43,11 +43,15 @@
             'name' => 'password_confirmation'
         ])
 
-        {{-- @input([
-            'label' => __('Roles:'),
-            'type' => 'text',
-            'name' => 'roles'
-        ]) --}}
+        @foreach ($roles as $id => $name)
+            @check([
+            'type' => 'checkbox',
+            'name' => "roles[$id]",
+            'label' => $name,
+            'value' => $id,
+            'elements' => old("roles[$id]") ? 'checked' : (in_array($id,$userRole) ? "checked" : "")
+            ])
+        @endforeach
     </div>
 </form>
 @endsection

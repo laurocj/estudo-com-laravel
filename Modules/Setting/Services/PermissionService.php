@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Services;
+namespace Modules\Setting\Services;
 
-use App\Repository\PermissionRepository;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
+use Modules\Setting\Repository\PermissionRepository;
 use Spatie\Permission\Models\Permission;
 
 class PermissionService

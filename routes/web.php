@@ -18,7 +18,6 @@ Route::middleware('auth')
     ->prefix('cms')
     ->group(function () {
         Route::get('/', 'Cms\DashboardController@index');
-        Route::resource('regras', 'Cms\RolesController');
         Route::resource('usuarios', 'Cms\UserController');
         Route::resource('produtos', 'Cms\ProductsController');
         Route::resource('categorias', 'Cms\CategoriesController');
@@ -28,6 +27,6 @@ Auth::routes();
 
 // Route::get('/', 'HomeController@index')->name('home');
 
-Route::get('/{any}', function() {
-    return view('spa');
-})->where('any', '.*');
+// Route::get('/{any}', function() {
+//     return view('spa');
+// })->where('any', '.*');

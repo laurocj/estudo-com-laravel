@@ -1,43 +1,43 @@
 <?php
 
+namespace Modules\Setting\Http\Controllers;
 
-namespace App\Http\Controllers\Cms;
-
-use Illuminate\Http\Request;
-use App\Http\Controllers\Cms\CmsController;
-use App\Http\Requests\UsersFormRequest;
-use App\Services\UserService;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Database\QueryException;
 use Illuminate\Support\Str;
-use Modules\Setting\Repository\RoleRepository;
+use Illuminate\Http\Request;
+use Illuminate\Database\QueryException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use App\Http\Controllers\Cms\CmsController;
 
-class UserController extends CmsController
+use Modules\Setting\Services\MenuService;
+use Modules\Setting\Http\Requests\Menu\MenuStoreRequest;
+use Modules\Setting\Http\Requests\Menu\MenuUpdateRequest;
+
+/**
+ * Class MenuController
+ * @package Modules\Setting\Http\Controllers
+ */
+class MenuController extends CmsController
 {
-
     /**
      * Path to views
      */
-    protected $_path = 'cms.users.';
+    protected $_path = 'setting::menu.';
 
     /**
      * Action Index in controller
      */
-    protected $_actionIndex = 'Cms\UserController@index';
+    protected $_actionIndex = '\Modules\Setting\Http\Controllers\MenuController@index';
 
     /**
-     * Service
+     * Modules\Setting\Services\MenuService
      *
-     * @var \App\Service\UserService $service
+     * @var Modules\Setting\Services\MenuService
      */
     private $service;
 
-    /**
-     * Construct
-     */
-    function __construct(UserService $service)
+    function __construct(MenuService $service)
     {
-        parent::__construct('user');
+        parent::__construct('menu');
         $this->service = $service;
     }
 
@@ -50,17 +50,18 @@ class UserController extends CmsController
     {
         $this->_itensPerPages = $request->itensPerPages ?? $this->_itensPerPages;
         if (empty($request->q)) {
-            $users = $this->service
-            ->paginate($this->_itensPerPages)
-            ->appends(['itensPerPages' => $this->_itensPerPages]);
+            $menus = $this->service
+                                ->paginate($this->_itensPerPages)
+                                ->appends(['itensPerPages' => $this->_itensPerPages]);
         } else {
-            $users = $this->search($request);
+            $menus = $this->search($request);
         }
-        return $this->showView(__FUNCTION__, compact('users'));
+
+        return $this->showView(__FUNCTION__, compact('menus'));
     }
 
     /**
-     * For research
+     * Para pesquisa
      * @param Request $request
      */
     public function search(Request $request)
@@ -70,10 +71,10 @@ class UserController extends CmsController
             $search['name'] = $request->q;
             $appends['q'] = $request->q;
             $appends['itensPerPages'] = $this->_itensPerPages;
-            return $this
-                ->service
-                ->search($appends['itensPerPages'], $search)
-                ->appends($appends);
+
+            return $this->service
+                        ->search($appends['itensPerPages'], $search)
+                        ->appends($appends);
         }
     }
 
@@ -84,63 +85,51 @@ class UserController extends CmsController
      */
     public function create()
     {
-        // $roles = $roleRepository->lists('name');
-        return $this->showView(__FUNCTION__, compact('roles'));
+        return $this->showView('create');
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  App\Http\Requests\UsersFormRequest  $request
+     * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function store(UsersFormRequest $request)
+    public function store(MenuStoreRequest $request)
     {
-        $user = $this->service->create(
-            $request->name,
-            $request->email,
-            $request->password,
-            $request->roles
-        );
+        $menu = $this->service->create(
+				$request->name,
+				$request->route
+                    );
 
-        if (empty($user)) {
-            return $this->returnIndexStatusNotOk(__('Error creating'));
+        if (empty($menu)) {
+            return $this->returnIndexStatusNotOk(__('Was not created!'));
         }
 
-        return $this->returnIndexStatusOk('User created successfully');
+        return $this->returnIndexStatusOk($menu->name . ' created');
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
     public function show($id)
     {
-        try {
-
-            $user = $this->service->find($id);
-
-        } catch (\Throwable $th) {
-
-            return $this->returnIndexStatusNotOk(__('Not found !'));
-
-        }
-        return $this->showView(__FUNCTION__, compact('user'));
+        //
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id, RoleRepository $roleRepository)
+    public function edit($id)
     {
         try {
 
-            $user = $this->service->find($id);
+            $menu = $this->service->find($id);
 
         } catch (\Throwable $th) {
 
@@ -148,30 +137,24 @@ class UserController extends CmsController
 
         }
 
-        $roles = $roleRepository->lists('name', 'name');
-
-        $userRole = $user->roles->pluck('name', 'name')->all();
-
-        return $this->showView(__FUNCTION__, compact('user', 'roles', 'userRole'));
+        return $this->showView(__FUNCTION__, compact('menu'));
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  App\Http\Requests\UsersFormRequest  $request
-     * @param  int  $id
+     * @param  \Illuminate\Http\Request $request
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
-    public function update(UsersFormRequest $request, $id)
+    public function update(MenuUpdateRequest $request, $id)
     {
         try {
 
             if ($this->service->update(
                     $id,
-                    $request->name,
-                    $request->email,
-                    $request->password,
-                    $request->roles
+				$request->name,
+				$request->route
                 )
             )
                 return $this->returnIndexStatusOk(__('Updated !'));
@@ -186,14 +169,13 @@ class UserController extends CmsController
     }
 
     /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param int $id
+     * @return \Illuminate\Http\RedirectResponse
+     * @throws \Exception
      */
     public function destroy($id)
     {
-        try {
+       try {
 
             if ($this->service->delete($id)) {
                 return $this->returnIndexStatusOk(__('Deleted !'));

@@ -40,11 +40,14 @@
             'name' => 'password_confirmation'
         ])
 
-        {{-- @input([
-            'label' => __('Roles:'),
-            'type' => 'text',
-            'name' => 'roles'
-        ]) --}}
+        @foreach ($roles as $id => $name)
+            @check([
+            'type' => 'checkbox',
+            'name' => 'roles',
+            'label' => $name,
+            'value' => $id
+            ])
+        @endforeach
     </div>
 </form>
 @endsection

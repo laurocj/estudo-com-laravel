@@ -32,6 +32,7 @@ class AppServiceProvider extends ServiceProvider
     private function loadBladeComponet()
     {
         Blade::include('cms.includes.input', 'input');
+        Blade::include('cms.includes.check', 'check');
         Blade::include('cms.includes.destroy', 'destroy');
         Blade::component('table-index', TableIndex::class);
     }
