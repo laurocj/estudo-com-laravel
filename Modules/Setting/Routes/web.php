@@ -20,4 +20,6 @@ Route::middleware('auth')
         Route::resource('regras', 'RolesController');
         Route::resource('menus', 'MenuController');
         Route::resource('permissions', 'PermissionController');
+        Route::resource('acls', 'AclController');
+        Route::resource('roles', 'RoleController');
     });

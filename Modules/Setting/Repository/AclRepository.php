@@ -2,10 +2,10 @@
 
 namespace Modules\Setting\Repository;
 
-use Modules\Setting\Entities\Role;
+use Modules\Setting\Entities\Acl;
 use App\Repository\GenericRepository;
 
-class RoleRepository
+class AclRepository
 {
     // operações basicas de pesquisa
     use GenericRepository;
@@ -15,6 +15,6 @@ class RoleRepository
      */
     public function __construct()
     {
-        $this->query = Role::query();
+        $this->query = Acl::query();
     }
 }

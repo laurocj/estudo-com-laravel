@@ -3,27 +3,27 @@
 namespace Modules\Setting\Services;
 
 use Illuminate\Support\Facades\DB;
-use Modules\Setting\Entities\Role;
-use Modules\Setting\Repository\RoleRepository;
+use Modules\Setting\Entities\Action;
+use Modules\Setting\Repository\ActionRepository;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
-class RoleService
+class ActionService
 {
 
     /**
-     * Role Repository
+     * Action Repository
      *
-     * @var RoleRepository
+     * @var ActionRepository
      */
     private $repository;
 
     /**
-     * Role Repository
-     * @param RoleRepository
+     * Action Repository
+     * @param ActionRepository
      *
      * @return this
      */
-    public function __construct(RoleRepository $repository)
+    public function __construct(ActionRepository $repository)
     {
         $this->repository = $repository;
     }
@@ -37,29 +37,29 @@ class RoleService
      */
     public function delete(int $id)
     {
-        $role = $this->find($id);
+        $action = $this->find($id);
 
-        return $this->repository->delete($role);
+        return $this->repository->delete($action);
     }
 
     /**
      * Find a model by its primary key
      * @param int $id
-     * @return Role
+     * @return Action
      *
      * @throws ModelNotFoundException
      */
     public function find(int $id)
     {
-        $role = $this->repository->find($id);
+        $action = $this->repository->find($id);
 
-        if(empty($role)) {
+        if(empty($action)) {
             throw (new ModelNotFoundException)->setModel(
-                get_class(Role::class), $id
+                get_class(Action::class), $id
             );
         }
 
-        return $role;
+        return $action;
     }
 
     /**
@@ -82,28 +82,28 @@ class RoleService
     }
 
     /**
-     * Create Role
+     * Create Action
      * @param string $name
      *
-     * @return Boolean|Role
+     * @return Boolean|Action
      */
     public function create(
 		string $name,
-		string $description
+		int $resource_id
     ) {
 
-        $role = new Role();
+        $action = new Action();
         
-		$role->name = $name;
-		$role->description = $description;
+		$action->name = $name;
+		$action->resource_id = $resource_id;
 
         DB::beginTransaction();
 
-        $isOk = $this->repository->save($role);
+        $isOk = $this->repository->save($action);
 
         if ($isOk) {
             DB::commit();
-            return $role;
+            return $action;
         } else {
             DB::rollBack();
             return $isOk;
@@ -111,7 +111,7 @@ class RoleService
     }
 
     /**
-     * Update Role
+     * Update Action
      *
      * @param int $id
      * @param string $name
@@ -121,17 +121,17 @@ class RoleService
     public function update(
         int $id,
 		string $name,
-		string $description
+		int $resource_id
     ) {
 
-        $role = $this->repository->find($id);
-        $role->id = $id;
-		$role->name = $name;
-		$role->description = $description;
+        $action = $this->repository->find($id);
+        $action->id = $id;
+		$action->name = $name;
+		$action->resource_id = $resource_id;
 
         DB::beginTransaction();
 
-        $isOk = $this->repository->save($role);
+        $isOk = $this->repository->save($action);
 
         if ($isOk) {
             DB::commit();
